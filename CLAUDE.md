@@ -1,6 +1,132 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Project Overview
+Build a production-ready skin lesion classification system that can distinguish between different types of skin lesions (benign vs malignant, or multi-class classification). The system should be modular, maintainable, and achieve strong performance metrics.
+
+## Core Requirements
+1. Data Handling Module
+Requirements:
+- Implement a flexible DataLoader class that can handle multiple datasets (HAM10000, ISIC, etc.)
+- Support for train/validation/test splits with stratification
+- Implement proper data augmentation pipeline for medical images
+- Handle class imbalance through weighted sampling or oversampling
+- Cache processed images for faster training
+
+2. Model Architecture Module
+Requirements:
+- Implement at least 3 different architectures:
+    - EfficientNet-B0/B1 (lightweight, good for deployment)
+    - ResNet50/101 with attention mechanisms
+    - Vision Transformer (ViT) or Swin Transformer
+- Use transfer learning with ImageNet pre-trained weights
+- Add custom head with dropout and batch normalization
+- Implement model ensembling capability
+Advanced Features:
+- Global Average Pooling + Attention mechanism
+- Multi-scale feature extraction
+- Auxiliary metadata input (age, sex, location) fusion
+- Uncertainty estimation (MC Dropout or ensemble)
+
+3. Training Pipeline
+Requirements:
+- Implement a comprehensive Trainer class with:
+    - Mixed precision training (FP16)
+    - Gradient accumulation for larger effective batch sizes
+    - Learning rate scheduling (Cosine annealing with warm restarts)
+    - Early stopping with patience
+    - Model checkpointing (save best and last)
+
+4. Evaluation & Metrics
+Implement comprehensive evaluation:
+    - Primary metrics: AUC-ROC, Sensitivity, Specificity
+    - Secondary metrics: F1-score, Precision, Recall per class
+    - Confusion matrix visualization
+    - ROC curves for each class
+    - Grade CAM/Attention visualization for interpretability
+    - Statistical significance testing between models
+
+5. Configuration Management
+Use YAML config files for all hyperparameters:
+```yaml
+data:
+  dataset: "HAM10000"
+  image_size: 224
+  batch_size: 32
+  num_workers: 4
+  augmentation:
+    rotation: 30
+    zoom: 0.2
+    horizontal_flip: true
+    color_jitter: 0.2
+
+model:
+  architecture: "efficientnet_b1"
+  pretrained: true
+  dropout: 0.3
+  num_classes: 7
+
+training:
+  epochs: 50
+  learning_rate: 1e-3
+  weight_decay: 1e-4
+  scheduler: "cosine"
+  early_stopping_patience: 10
+```
+
+6. Performance Optimization
+Requirements:
+    Achieve >85% balanced accuracy on validation set
+    Implement test-time augmentation (TTA)
+    Use ensemble of top 3 models
+    Optimize for both accuracy and inference speed
+    Implement knowledge distillation for model compression
+
+7. Inference Module
+Create a clean inference API:
+```python
+class SkinLesionPredictor:
+    def __init__(self, model_path, config_path):
+        # Load model and preprocessing pipeline
+    
+    def predict(self, image_path, return_probabilities=True):
+        # Single image prediction with confidence scores
+    
+    def predict_batch(self, image_paths):
+        # Efficient batch prediction
+    
+    def explain_prediction(self, image_path):
+        # Return prediction with GradCAM visualization
+```
+
+8. Code Quality Requirements
+Type hints for all functions
+Comprehensive docstrings (Google style)
+Unit tests for data loading and preprocessing
+Integration tests for training pipeline
+Code should pass flake8 and black formatting
+Implement proper logging throughout
+Error handling for edge cases
+
+9. Additional Features
+Web API: Create FastAPI endpoint for model serving
+Docker: Containerize the application
+Model versioning: Track experiments with MLflow/W&B
+Data versioning: Use DVC for dataset management
+CI/CD: GitHub Actions for testing and deployment
+
+10. Documentation
+Include:
+    README with setup instructions
+    Model card with performance metrics
+    API documentation
+    Jupyter notebook with EDA and results visualization
+    Training reproduction instructions
+
+Performance Targets
+    Validation AUC-ROC: >0.90
+    Inference time: <100ms per image
+    Model size: <50MB (quantized)
+    Memory usage: <2GB during inference
 
 ## Common Commands
 
