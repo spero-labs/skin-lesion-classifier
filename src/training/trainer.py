@@ -1,3 +1,26 @@
+"""Training module for skin lesion classification models.
+
+This module implements the main training loop with advanced features:
+- Mixed precision training (FP16) for efficiency
+- Gradient accumulation for larger effective batch sizes
+- Multiple optimizer and scheduler options
+- Comprehensive metrics tracking
+- Early stopping and model checkpointing
+- Weights & Biases integration for experiment tracking
+
+The trainer handles the complete training pipeline including:
+1. Training epochs with progress tracking
+2. Validation after each epoch
+3. Test evaluation
+4. Callback management (early stopping, checkpointing)
+5. Metric logging and visualization
+
+Typical usage:
+    trainer = Trainer(model, config)
+    trainer.train(train_loader, val_loader)
+    test_metrics = trainer.test(test_loader)
+"""
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -6,7 +29,7 @@ from torch.optim import Adam, AdamW, SGD
 from torch.optim.lr_scheduler import CosineAnnealingLR, ReduceLROnPlateau, StepLR
 from tqdm import tqdm
 import wandb
-from typing import Dict, Optional, Any
+from typing import Dict, Optional, Any, Tuple
 import logging
 from pathlib import Path
 
@@ -26,25 +49,57 @@ logger = logging.getLogger(__name__)
 
 
 class Trainer:
-    """Main training class for skin lesion classification."""
+    """Main training orchestrator for skin lesion classification.
+    
+    Manages the complete training pipeline with state-of-the-art
+    techniques for medical image classification. Handles device
+    management, optimization, metrics tracking, and callbacks.
+    
+    Features:
+        - Automatic device selection (CUDA/MPS/CPU)
+        - Mixed precision training support
+        - Gradient accumulation
+        - Multiple loss functions (CE, Focal, Label Smoothing)
+        - Comprehensive metrics (AUC, sensitivity, specificity)
+        - Automatic checkpointing and early stopping
+        - Experiment tracking with W&B
+    
+    Attributes:
+        model (BaseModel): Neural network model to train
+        config (TrainingConfig): Training configuration
+        device (str): Computing device ('cuda', 'mps', or 'cpu')
+        optimizer: PyTorch optimizer
+        scheduler: Learning rate scheduler
+        criterion: Loss function
+        scaler: Gradient scaler for mixed precision
+        callbacks: Dictionary of training callbacks
+    """
 
     def __init__(
         self,
         model: BaseModel,
         config: TrainingConfig,
-        device: str = None,
+        device: Optional[str] = None,
         use_wandb: bool = True,
         checkpoint_dir: str = "checkpoints",
-    ):
-        """
-        Initialize trainer.
+    ) -> None:
+        """Initialize the Trainer with model and configuration.
         
         Args:
-            model: Model to train
-            config: Training configuration
-            device: Device to use (cuda/cpu)
-            use_wandb: Whether to use Weights & Biases
-            checkpoint_dir: Directory for checkpoints
+            model: Neural network model inheriting from BaseModel
+            config: Training configuration object containing:
+                - epochs: Number of training epochs
+                - learning_rate: Initial learning rate
+                - optimizer: Optimizer name ('adam', 'adamw', 'sgd')
+                - scheduler: LR scheduler name
+                - loss: Loss function name
+                - early_stopping_patience: Epochs to wait before stopping
+            device: Computing device ('cuda', 'mps', 'cpu', or None for auto)
+            use_wandb: Whether to log metrics to Weights & Biases
+            checkpoint_dir: Directory to save model checkpoints
+        
+        Raises:
+            ValueError: If invalid optimizer or loss function specified
         """
         self.model = model
         self.config = config

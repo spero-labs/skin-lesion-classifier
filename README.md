@@ -2,21 +2,21 @@
 
 A production-ready deep learning system for classifying skin lesions using the HAM10000 dataset. The system achieves **97.58% AUC-ROC** in distinguishing between 7 types of skin lesions using state-of-the-art architectures and training techniques.
 
-## 🎯 Performance Highlights
+## Performance Highlights
 
 <div align="center">
 
 | Metric | Score | Target | Status |
 |--------|-------|--------|--------|
-| **AUC-ROC** | 97.58% | >90% | ✅ Exceeded |
-| **Accuracy** | 87.49% | - | ✅ |
-| **Balanced Accuracy** | 82.67% | >85% | ⚠️ Close |
-| **Sensitivity (Avg)** | 82.67% | - | ✅ |
-| **Specificity (Avg)** | 97.55% | - | ✅ |
+| **AUC-ROC** | 97.58% | >90% | Exceeded |
+| **Accuracy** | 87.49% | - | Yes |
+| **Balanced Accuracy** | 82.67% | >85% | Close |
+| **Sensitivity (Avg)** | 82.67% | - | Good |
+| **Specificity (Avg)** | 97.55% | - | Excellent |
 
 </div>
 
-## 📊 Training Results & Analysis
+## Training Results & Analysis
 
 ### Training Curves
 The model demonstrated excellent learning behavior with steady improvement and minimal overfitting:
@@ -49,7 +49,7 @@ Analysis of how class distribution affects model performance:
 - Classes with <500 samples show significantly lower performance
 - Weighted sampling helped mitigate imbalance effects
 
-## 🏗️ Architecture & Features
+## Architecture & Features
 
 ### Model Architectures
 - **EfficientNet-B0/B1**: Lightweight, deployment-ready (23MB)
@@ -72,7 +72,7 @@ Analysis of how class distribution affects model performance:
 - Random resized crops
 - Normalization with ImageNet statistics
 
-## 📁 Dataset
+## Dataset
 
 The HAM10000 dataset contains 10,015 dermoscopic images across 7 classes:
 
@@ -86,7 +86,7 @@ The HAM10000 dataset contains 10,015 dermoscopic images across 7 classes:
 | **vasc** | Vascular lesions | 142 | 47.2x | 0.92 |
 | **df** | Dermatofibroma | 115 | 58.3x | 0.50 |
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Installation
 ```bash
@@ -162,12 +162,12 @@ experiment:
   seed: 42
 ```
 
-## 📈 Model Performance Details
+## Model Performance Details
 
 ### Overall Metrics
-- **Test AUC-ROC**: 0.9758 (Target: >0.90 ✅)
+- **Test AUC-ROC**: 0.9758 (Target: >0.90 - Exceeded)
 - **Test Accuracy**: 0.8749
-- **Test Balanced Accuracy**: 0.8267 (Target: >0.85 ⚠️)
+- **Test Balanced Accuracy**: 0.8267 (Target: >0.85 - Close)
 - **Average Sensitivity**: 0.8267
 - **Average Specificity**: 0.9755
 
@@ -188,11 +188,11 @@ experiment:
 #### Melanoma Detection (Critical for Patient Safety)
 - **Sensitivity**: 82.0% - Good ability to detect melanoma
 - **Specificity**: 90.8% - Low false positive rate
-- **Clinical Assessment**: Suitable for screening applications ✅
+- **Clinical Assessment**: Suitable for screening applications
 
 The model shows strong performance for melanoma detection, which is crucial for early intervention. The high specificity (90.8%) means fewer unnecessary biopsies, while the good sensitivity (82%) ensures most melanomas are caught.
 
-## 🔬 Analysis & Insights
+## Analysis & Insights
 
 ### Training Behavior
 1. **Convergence**: Model converged smoothly without oscillations
@@ -211,7 +211,7 @@ The model shows strong performance for melanoma detection, which is crucial for 
 4. **External Validation**: Test on ISIC 2019/2020 datasets
 5. **Metadata Integration**: Incorporate patient age, sex, lesion location
 
-## 🛠️ Project Structure
+## Project Structure
 
 ```
 skin-lesion-classifier/
@@ -246,16 +246,16 @@ skin-lesion-classifier/
 └── Makefile           # Command interface
 ```
 
-## 🔧 Common Commands
+## Common Commands
 
-### 📦 Setup & Installation
+### Setup & Installation
 ```bash
 make install              # Install all dependencies
 make install-dev          # Install development dependencies  
 make fix-limits           # Fix macOS file descriptor limits
 ```
 
-### 🚀 Training & Testing
+### Training & Testing
 ```bash
 make train                # Train model (50 epochs)
 make quick-train          # Quick training (10 epochs)
@@ -264,7 +264,7 @@ make test-system          # Test system components
 make test                 # Run unit tests
 ```
 
-### 📊 Analysis & Visualization
+### Analysis & Visualization
 ```bash
 make analyze              # Analyze training results
 make visualize            # Generate visualizations
@@ -272,7 +272,7 @@ make show-results         # Display metrics summary
 make tensorboard          # Start TensorBoard
 ```
 
-### 🔧 Development Tools
+### Development Tools
 ```bash
 make format               # Format code with black
 make lint                 # Check code style
@@ -281,27 +281,27 @@ make pre-commit           # Run all checks
 make dev                  # Run format, lint, test
 ```
 
-### 🌐 API & Serving
+### API & Serving
 ```bash
 make serve                # Start FastAPI server
 make serve-dev            # Development mode with debug
 make api-docs             # Open API documentation
 ```
 
-### 📓 Jupyter
+### Jupyter
 ```bash
 make notebook             # Start Jupyter server
 make notebook-clean       # Clean notebook outputs
 ```
 
-### 🧹 Cleanup
+### Cleanup
 ```bash
 make clean                # Clean cache files
 make clean-all            # Clean everything
 make clean-logs           # Clean log files
 ```
 
-### 📋 Information
+### Information
 ```bash
 make help                 # Show all commands
 make info                 # Project information
@@ -309,7 +309,7 @@ make check-gpu            # Check GPU availability
 make dataset-info         # Dataset statistics
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### macOS Issues
 
@@ -354,7 +354,7 @@ make quick-train
 python scripts/training/train.py data.image_size=192 model.architecture=efficientnet_b0
 ```
 
-## 📝 Citation
+## Citation
 
 If you use this implementation, please cite:
 
@@ -368,22 +368,22 @@ If you use this implementation, please cite:
 }
 ```
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📄 License
+## License
 
 This project is for educational and research purposes.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - HAM10000 dataset: [Harvard Dataverse](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/DBW86T)
 - Model architectures: [timm library](https://github.com/rwightman/pytorch-image-models)
 - Training framework: [PyTorch](https://pytorch.org/)
 - Configuration: [Hydra](https://hydra.cc/)
 
-## 📧 Contact
+## Contact
 
 For questions or issues, please open an issue on GitHub.
 
@@ -391,6 +391,6 @@ For questions or issues, please open an issue on GitHub.
 
 <div align="center">
   
-**Built with ❤️ for advancing medical AI**
+**Built for advancing medical AI**
 
 </div>

@@ -1,3 +1,39 @@
+"""Model architectures module for skin lesion classification.
+
+This module provides state-of-the-art deep learning architectures optimized
+for medical image classification. Each architecture is designed to handle the
+specific challenges of dermoscopic image analysis including fine-grained
+features, class imbalance, and limited training data.
+
+Key architectures:
+    - EfficientNet: Efficient scaling with compound coefficient
+    - ResNet with Attention: Deep residual learning with attention mechanisms
+    - Vision Transformer (ViT): Pure transformer architecture for images
+    - Swin Transformer: Hierarchical vision transformer with shifted windows
+    - Ensemble Model: Combines multiple architectures for robustness
+
+All models support:
+    - Transfer learning from ImageNet pretrained weights
+    - Custom classification heads with dropout and batch normalization
+    - Optional metadata fusion (age, sex, location)
+    - Attention mechanisms for feature enhancement
+    - Flexible backbone freezing for fine-tuning
+
+Typical usage:
+    model = EfficientNetModel(
+        model_name='efficientnet_b1',
+        num_classes=7,
+        pretrained=True,
+        use_metadata=True
+    )
+    
+    # For inference
+    logits = model(images, metadata)
+    
+    # For feature extraction
+    features = model.get_features(images)
+"""
+
 import timm
 import torch
 import torch.nn as nn
@@ -6,7 +42,30 @@ from .base_model import BaseModel
 
 
 class EfficientNetModel(BaseModel):
-    """EfficientNet with custom head and attention mechanism."""
+    """EfficientNet with custom head and attention mechanism.
+    
+    EfficientNet uses a compound scaling method that uniformly scales
+    network width, depth, and resolution with a set of fixed scaling
+    coefficients. This architecture is particularly effective for
+    medical images due to its excellent accuracy-efficiency trade-off.
+    
+    Key features:
+        - Compound scaling for optimal resource utilization
+        - Attention mechanism for focusing on lesion regions
+        - Lightweight architecture suitable for deployment
+        - Strong performance on small datasets with transfer learning
+    
+    Architecture details:
+        - Backbone: EfficientNet-B0 to B7 (configurable)
+        - Attention: Channel-wise attention with sigmoid gating
+        - Head: 3-layer MLP with batch normalization and dropout
+        - Optional: Metadata fusion for demographic features
+    
+    Performance characteristics:
+        - Model size: 20-60MB depending on variant
+        - Inference time: <50ms on GPU
+        - Memory usage: 2-4GB during training
+    """
 
     def __init__(
         self,
@@ -91,7 +150,36 @@ class EfficientNetModel(BaseModel):
 
 
 class ResNetWithAttention(BaseModel):
-    """ResNet with attention mechanism and custom head."""
+    """ResNet with dual attention mechanism and custom head.
+    
+    Enhances the standard ResNet architecture with both channel and
+    spatial attention mechanisms. This combination helps the model
+    focus on relevant features and spatial regions, crucial for
+    identifying subtle dermoscopic patterns.
+    
+    Key features:
+        - Dual attention: Channel attention (SE-like) + Spatial attention
+        - Deep residual connections prevent gradient vanishing
+        - Robust to various image qualities and conditions
+        - Excellent for capturing multi-scale features
+    
+    Attention mechanisms:
+        1. Channel Attention: Recalibrates channel-wise feature responses
+           - Squeeze: Global average pooling
+           - Excitation: Two FC layers with ReLU
+           - Scale: Element-wise multiplication
+        
+        2. Spatial Attention: Focuses on informative spatial regions
+           - Aggregate: Channel-wise max and average pooling
+           - Transform: 7x7 convolution
+           - Scale: Element-wise multiplication
+    
+    Architecture variants:
+        - ResNet18: Lightweight, good for quick experiments
+        - ResNet34: Balanced performance
+        - ResNet50: Standard choice, good accuracy
+        - ResNet101: High capacity for complex patterns
+    """
     
     def __init__(
         self,
@@ -196,7 +284,38 @@ class ResNetWithAttention(BaseModel):
 
 
 class VisionTransformerModel(BaseModel):
-    """Vision Transformer for skin lesion classification."""
+    """Vision Transformer (ViT) for skin lesion classification.
+    
+    Applies the transformer architecture directly to sequences of image
+    patches, treating an image as a sequence of visual tokens. This
+    approach captures long-range dependencies and global context better
+    than convolutional networks.
+    
+    Key features:
+        - Pure transformer architecture without convolutions
+        - Global receptive field from the first layer
+        - Position embeddings for spatial information
+        - Strong performance with sufficient data and augmentation
+    
+    How it works:
+        1. Divide image into fixed-size patches (16x16 or 32x32)
+        2. Linearly embed each patch
+        3. Add position embeddings
+        4. Process with transformer encoder blocks
+        5. Use [CLS] token or average pooling for classification
+    
+    Advantages for medical imaging:
+        - Captures global context important for diagnosis
+        - Less inductive bias, learns from data
+        - Excellent transfer learning from large datasets
+        - Interpretable attention maps
+    
+    Model variants:
+        - ViT-Tiny: 5.7M parameters, fast inference
+        - ViT-Small: 22M parameters, good balance
+        - ViT-Base: 86M parameters, high accuracy
+        - ViT-Large: 307M parameters, state-of-the-art
+    """
 
     def __init__(
         self,
@@ -261,7 +380,37 @@ class VisionTransformerModel(BaseModel):
 
 
 class SwinTransformerModel(BaseModel):
-    """Swin Transformer for skin lesion classification."""
+    """Swin Transformer for hierarchical skin lesion classification.
+    
+    Swin (Shifted Window) Transformer builds hierarchical feature maps
+    and has linear computational complexity with respect to image size.
+    It combines the strengths of CNNs (hierarchical features, translation
+    invariance) with transformers (long-range dependencies, flexibility).
+    
+    Key innovations:
+        - Hierarchical architecture with merging layers
+        - Shifted window approach for cross-window connections
+        - Linear complexity O(n) instead of quadratic O(n²)
+        - Multi-scale feature representations
+    
+    Architecture details:
+        - Patch partition: 4x4 patches as input tokens
+        - 4 stages with progressively merged patches
+        - Window-based self-attention (7x7 windows)
+        - Shifted windows for cross-window connections
+    
+    Advantages for dermoscopy:
+        - Captures both local textures and global structure
+        - Efficient for high-resolution medical images
+        - Strong performance on various scales
+        - Better than ViT on smaller datasets
+    
+    Model variants:
+        - Swin-Tiny: 28M params, efficient
+        - Swin-Small: 50M params, balanced
+        - Swin-Base: 88M params, high performance
+        - Swin-Large: 197M params, maximum accuracy
+    """
     
     def __init__(
         self,
@@ -323,7 +472,36 @@ class SwinTransformerModel(BaseModel):
 
 
 class EnsembleModel(BaseModel):
-    """Ensemble of multiple models for improved performance."""
+    """Ensemble of multiple models for improved robustness and accuracy.
+    
+    Combines predictions from multiple diverse models to achieve better
+    performance than any individual model. Particularly effective for
+    medical imaging where different architectures capture complementary
+    features and reduce prediction variance.
+    
+    Ensemble strategies:
+        - Weighted averaging: Combine logits with learned weights
+        - Voting: Hard or soft voting across models
+        - Stacking: Meta-learner on top of base models
+    
+    Benefits:
+        - Reduced overfitting through model diversity
+        - Improved generalization to unseen data
+        - Higher confidence in predictions
+        - Robustness to model-specific failures
+    
+    Typical ensemble composition:
+        1. EfficientNet: Efficient feature extraction
+        2. ResNet+Attention: Spatial pattern recognition
+        3. Transformer: Global context understanding
+    
+    Performance gains:
+        - Typically 2-5% improvement in AUC-ROC
+        - More stable predictions across datasets
+        - Better calibrated probability estimates
+    
+    Note: Increases inference time proportionally to number of models
+    """
 
     def __init__(self, models: List[BaseModel], weights: Optional[List[float]] = None):
         if len(models) == 0:

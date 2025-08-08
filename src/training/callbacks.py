@@ -1,3 +1,35 @@
+"""Training callbacks module for model training orchestration.
+
+This module provides callback utilities for managing the training process,
+including early stopping, model checkpointing, learning rate scheduling,
+gradient accumulation, and metrics tracking.
+
+Key callbacks:
+    - EarlyStopping: Prevents overfitting by stopping training when no improvement
+    - ModelCheckpoint: Saves best and last model states during training
+    - LearningRateScheduler: Manages learning rate adjustments
+    - GradientAccumulator: Enables larger effective batch sizes
+    - MetricTracker: Logs and saves training metrics
+
+These callbacks work together to:
+    1. Optimize training efficiency (early stopping, LR scheduling)
+    2. Preserve best model states (checkpointing)
+    3. Enable training with limited memory (gradient accumulation)
+    4. Track experiment progress (metrics tracking)
+
+Typical usage:
+    early_stopping = EarlyStopping(patience=10, mode='max')
+    checkpoint = ModelCheckpoint(save_dir='checkpoints', monitor='auc')
+    
+    for epoch in range(epochs):
+        train_metrics = train_epoch()
+        val_metrics = validate()
+        
+        checkpoint(model, optimizer, epoch, val_metrics)
+        if early_stopping(val_metrics['auc']):
+            break
+"""
+
 import torch
 import numpy as np
 from pathlib import Path
@@ -9,7 +41,24 @@ logger = logging.getLogger(__name__)
 
 
 class EarlyStopping:
-    """Early stopping callback to prevent overfitting."""
+    """Early stopping callback to prevent overfitting.
+    
+    Monitors a metric during training and stops when it stops improving,
+    preventing overfitting and saving training time. Particularly useful
+    for medical image classification where overfitting to training data
+    can hurt generalization to new patient data.
+    
+    The callback tracks the best score seen so far and counts epochs
+    without improvement. Training stops when patience is exhausted.
+    
+    Attributes:
+        patience (int): Epochs to wait before stopping
+        min_delta (float): Minimum change to qualify as improvement
+        mode (str): Whether to maximize or minimize the metric
+        counter (int): Current count of epochs without improvement
+        best_score (float): Best metric value seen so far
+        early_stop (bool): Flag indicating if training should stop
+    """
     
     def __init__(
         self,
@@ -80,7 +129,31 @@ class EarlyStopping:
 
 
 class ModelCheckpoint:
-    """Save model checkpoints during training."""
+    """Save model checkpoints during training.
+    
+    Automatically saves model states at key points during training,
+    ensuring the best performing model is preserved even if training
+    crashes or is interrupted. Essential for long training runs and
+    hyperparameter tuning.
+    
+    Features:
+        - Saves best model based on monitored metric
+        - Always saves last checkpoint for resuming
+        - Optional epoch-wise checkpointing
+        - Saves associated metrics with each checkpoint
+    
+    The checkpoint includes:
+        - Model state dictionary
+        - Optimizer state dictionary
+        - Current epoch number
+        - Metrics at checkpoint time
+    
+    Attributes:
+        save_dir (Path): Directory for saving checkpoints
+        monitor (str): Metric name to monitor for best model
+        mode (str): Whether to maximize or minimize the metric
+        best_score (float): Best metric value seen so far
+    """
     
     def __init__(
         self,
@@ -195,7 +268,26 @@ class ModelCheckpoint:
 
 
 class LearningRateScheduler:
-    """Learning rate scheduler callback."""
+    """Learning rate scheduler callback.
+    
+    Wrapper for PyTorch learning rate schedulers that handles both
+    epoch-based and metric-based scheduling. Provides consistent
+    interface and logging for different scheduler types.
+    
+    Supports:
+        - Step-based schedulers (StepLR, CosineAnnealingLR)
+        - Metric-based schedulers (ReduceLROnPlateau)
+        - Custom scheduling strategies
+    
+    Learning rate scheduling is crucial for:
+        - Escaping local minima
+        - Fine-tuning convergence
+        - Achieving better final performance
+    
+    Attributes:
+        scheduler: Underlying PyTorch scheduler
+        metric_based (bool): Whether scheduler requires metric input
+    """
     
     def __init__(
         self,
@@ -234,7 +326,28 @@ class LearningRateScheduler:
 
 
 class GradientAccumulator:
-    """Gradient accumulation for larger effective batch sizes."""
+    """Gradient accumulation for larger effective batch sizes.
+    
+    Enables training with larger effective batch sizes than GPU memory
+    allows by accumulating gradients over multiple forward passes
+    before performing a backward pass. Critical for training large
+    models or using large batch sizes on limited hardware.
+    
+    Benefits:
+        - Simulates larger batch sizes without memory overhead
+        - Improves gradient stability
+        - Better convergence for batch-sensitive models
+    
+    Example:
+        With batch_size=8 and accumulation_steps=4:
+        - Effective batch size = 32
+        - Memory usage remains at batch_size=8
+        - Gradients averaged over 4 mini-batches
+    
+    Attributes:
+        accumulation_steps (int): Number of steps to accumulate
+        current_step (int): Current accumulation step counter
+    """
     
     def __init__(self, accumulation_steps: int = 1):
         """
@@ -260,7 +373,30 @@ class GradientAccumulator:
 
 
 class MetricTracker:
-    """Track and log metrics during training."""
+    """Track and log metrics during training.
+    
+    Centralized metric tracking for training, validation, and test phases.
+    Stores all metrics throughout training for later analysis, visualization,
+    and model selection. Essential for experiment tracking and reproducibility.
+    
+    Features:
+        - Separate tracking for train/val/test phases
+        - Automatic metric history saving
+        - Best metric identification
+        - JSON export for analysis
+    
+    The tracker maintains complete history enabling:
+        - Training curve visualization
+        - Overfitting detection
+        - Optimal epoch identification
+        - Cross-experiment comparison
+    
+    Attributes:
+        save_dir (Path): Directory for saving metric logs
+        train_metrics (List): Training phase metrics history
+        val_metrics (List): Validation phase metrics history
+        test_metrics (List): Test phase metrics history
+    """
     
     def __init__(self, save_dir: Optional[str] = None):
         """

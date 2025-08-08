@@ -1,3 +1,38 @@
+"""Inference predictor module for skin lesion classification.
+
+This module provides the main inference interface for making predictions
+on new skin lesion images. It handles model loading, image preprocessing,
+prediction generation, and result formatting for both single images and
+batches.
+
+Key features:
+    - Single and batch prediction capabilities
+    - Test-time augmentation (TTA) for improved accuracy
+    - Confidence scores and top-k predictions
+    - Model-agnostic interface
+    - Explanation generation (Grad-CAM integration)
+
+The predictor provides:
+    1. Clean API for production deployment
+    2. Efficient batch processing
+    3. Comprehensive result formatting
+    4. Optional interpretability features
+
+Typical usage:
+    predictor = SkinLesionPredictor(
+        model_path='checkpoints/best_model.pth',
+        use_tta=True
+    )
+    
+    # Single prediction
+    result = predictor.predict('path/to/image.jpg')
+    print(f"Predicted: {result['predicted_class']}")
+    print(f"Confidence: {result['confidence']:.2%}")
+    
+    # Batch prediction
+    results = predictor.predict_batch(image_paths)
+"""
+
 import torch
 import torch.nn.functional as F
 import numpy as np
@@ -15,7 +50,29 @@ logger = logging.getLogger(__name__)
 
 
 class SkinLesionPredictor:
-    """Inference class for skin lesion prediction."""
+    """Production-ready inference class for skin lesion prediction.
+    
+    Handles the complete inference pipeline from image loading to
+    prediction formatting. Supports both single and batch predictions
+    with optional test-time augmentation for improved accuracy.
+    
+    The predictor provides:
+        - Efficient model loading and caching
+        - Automatic image preprocessing
+        - TTA for uncertainty reduction
+        - Comprehensive result formatting
+        - Clinical interpretation helpers
+    
+    Class attributes:
+        CLASS_NAMES: List of skin lesion class identifiers
+        CLASS_DESCRIPTIONS: Clinical descriptions of each class
+    
+    Instance attributes:
+        model: Loaded PyTorch model
+        device: Computing device (cuda/cpu)
+        transform: Preprocessing pipeline
+        tta: Test-time augmentation handler
+    """
     
     CLASS_NAMES = ["akiec", "bcc", "bkl", "df", "mel", "nv", "vasc"]
     CLASS_DESCRIPTIONS = {

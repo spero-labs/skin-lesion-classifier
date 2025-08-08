@@ -24,7 +24,7 @@ def print_summary(metrics):
     val_metrics = metrics.get('val', [])
     test_metrics = metrics.get('test', [])
     
-    print(f"\n📊 Training Details:")
+    print(f"\nTraining Details:")
     print(f"  • Epochs trained: {len(train_metrics)}")
     
     if train_metrics:
@@ -38,14 +38,14 @@ def print_summary(metrics):
         best_val_auc = max(val_metrics, key=lambda x: x.get('auc_macro', 0))
         best_val_acc = max(val_metrics, key=lambda x: x.get('accuracy', 0))
         
-        print(f"\n🎯 Best Validation Results:")
+        print(f"\nBest Validation Results:")
         print(f"  • Best AUC: {best_val_auc.get('auc_macro', 0):.4f}")
         print(f"  • Best Accuracy: {best_val_acc.get('accuracy', 0):.4f}")
         print(f"  • Best Balanced Accuracy: {best_val_auc.get('balanced_accuracy', 0):.4f}")
     
     if test_metrics:
         test = test_metrics[-1]
-        print(f"\n✅ Test Results:")
+        print(f"\nTest Results:")
         print(f"  • Test AUC: {test.get('auc_macro', 0):.4f}")
         print(f"  • Test Accuracy: {test.get('accuracy', 0):.4f}")
         print(f"  • Test Balanced Accuracy: {test.get('balanced_accuracy', 0):.4f}")
@@ -53,7 +53,7 @@ def print_summary(metrics):
         print(f"  • Test Specificity: {test.get('avg_specificity', 0):.4f}")
         
         # Per-class results
-        print(f"\n📋 Per-Class Performance:")
+        print(f"\nPer-Class Performance:")
         classes = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
         for cls in classes:
             f1 = test.get(f'{cls}_f1', 0)
@@ -127,12 +127,12 @@ def plot_training_curves(metrics, save_path="training_curves.png"):
     
     plt.tight_layout()
     plt.savefig(save_path, dpi=150, bbox_inches='tight')
-    print(f"\n📈 Training curves saved to: {save_path}")
+    print(f"\nTraining curves saved to: {save_path}")
     plt.show()
 
 def check_saved_files():
     """Check what files were saved during training."""
-    print("\n📁 Saved Files:")
+    print("\nSaved Files:")
     
     # Check checkpoints directory
     checkpoint_dir = Path("checkpoints")
@@ -144,7 +144,7 @@ def check_saved_files():
                 size = f.stat().st_size / 1024 / 1024  # MB
                 print(f"    • {f.name}: {size:.2f} MB")
         else:
-            print(f"  ⚠️  No files in checkpoints directory")
+            print(f"  Warning: No files in checkpoints directory")
     
     # Check outputs directory
     outputs_dir = Path("outputs")
@@ -167,8 +167,8 @@ def check_saved_files():
             size = f.stat().st_size / 1024 / 1024  # MB
             print(f"    • {f}: {size:.2f} MB")
     else:
-        print(f"\n  ⚠️  No .pth model files found")
-        print(f"  ℹ️  Model checkpoints should be saved during training")
+        print(f"\n  Warning: No .pth model files found")
+        print(f"  Info: Model checkpoints should be saved during training")
         print(f"     You may need to retrain with checkpoint saving enabled")
 
 def main():
@@ -179,7 +179,7 @@ def main():
     # Load metrics
     metrics_path = "checkpoints/training_metrics.json"
     if not Path(metrics_path).exists():
-        print(f"❌ Metrics file not found: {metrics_path}")
+        print(f"Error: Metrics file not found: {metrics_path}")
         print("   Please run training first.")
         return
     
@@ -195,34 +195,34 @@ def main():
     try:
         plot_training_curves(metrics)
     except Exception as e:
-        print(f"\n⚠️  Could not generate plots: {e}")
+        print(f"\nWarning: Could not generate plots: {e}")
     
     print("\n" + "="*60)
-    print("✅ Analysis complete!")
+    print("Analysis complete!")
     
     # Provide recommendations
-    print("\n💡 Recommendations:")
+    print("\nRecommendations:")
     
     val_metrics = metrics.get('val', [])
     if val_metrics:
         best_auc = max(v.get('auc_macro', 0) for v in val_metrics)
         if best_auc > 0.97:
-            print("  • Excellent performance achieved! (AUC > 0.97)")
-            print("  • Model is ready for deployment")
+            print("  - Excellent performance achieved! (AUC > 0.97)")
+            print("  - Model is ready for deployment")
         elif best_auc > 0.90:
-            print("  • Good performance achieved (AUC > 0.90)")
-            print("  • Consider training for more epochs or trying a larger model")
+            print("  - Good performance achieved (AUC > 0.90)")
+            print("  - Consider training for more epochs or trying a larger model")
         else:
-            print("  • Performance needs improvement")
-            print("  • Try: more epochs, different architecture, or data augmentation")
+            print("  - Performance needs improvement")
+            print("  - Try: more epochs, different architecture, or data augmentation")
     
     # Check for overfitting
     if train_metrics and val_metrics:
         train_acc = train_metrics[-1].get('accuracy', 0)
         val_acc = val_metrics[-1].get('accuracy', 0)
         if train_acc - val_acc > 0.1:
-            print("  • ⚠️  Possible overfitting detected (train-val gap > 0.1)")
-            print("  • Consider: more dropout, data augmentation, or regularization")
+            print("  - Warning: Possible overfitting detected (train-val gap > 0.1)")
+            print("  - Consider: more dropout, data augmentation, or regularization")
 
 if __name__ == "__main__":
     main()

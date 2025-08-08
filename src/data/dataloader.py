@@ -1,3 +1,24 @@
+"""DataLoader module for skin lesion classification.
+
+This module provides data loading utilities for the HAM10000 dataset,
+including stratified train/val/test splits, weighted sampling for class
+imbalance, and proper augmentation pipelines.
+
+Key components:
+    - DataModule: Main class for managing all data loaders
+    - Weighted sampling for handling class imbalance
+    - Automatic augmentation pipeline selection
+    - Support for metadata features
+
+Typical usage:
+    data_module = DataModule(config)
+    data_module.setup()
+    train_loader = data_module.train_dataloader()
+    for batch in train_loader:
+        images, labels = batch
+        # Training code here
+"""
+
 import torch
 from torch.utils.data import DataLoader, WeightedRandomSampler
 from typing import Optional, Dict
@@ -9,14 +30,44 @@ logger = logging.getLogger(__name__)
 
 
 class DataModule:
-    """Data module for managing train/val/test dataloaders."""
+    """Centralized data module for managing train/val/test dataloaders.
     
-    def __init__(self, config: Dict):
-        """
-        Initialize data module.
+    This class handles the complete data pipeline including:
+    - Creating stratified train/val/test splits
+    - Loading datasets with appropriate augmentations
+    - Creating weighted samplers for class imbalance
+    - Managing DataLoader creation with optimal settings
+    
+    The module ensures consistent data handling across training,
+    validation, and testing phases while properly handling the
+    severe class imbalance in the HAM10000 dataset.
+    
+    Attributes:
+        config (Dict): Configuration dictionary
+        data_dir (str): Path to HAM10000 data directory
+        metadata_path (str): Path to metadata CSV
+        batch_size (int): Batch size for training
+        num_workers (int): Number of data loading workers
+        image_size (int): Target image size
+        use_metadata (bool): Whether to include patient metadata
+        use_weighted_sampling (bool): Whether to use weighted sampling
+    """
+    
+    def __init__(self, config: Dict) -> None:
+        """Initialize the DataModule with configuration.
         
         Args:
-            config: Data configuration dictionary
+            config: Data configuration dictionary containing:
+                - data_dir: Path to HAM10000 directory
+                - metadata_path: Path to metadata CSV
+                - batch_size: Training batch size (default: 32)
+                - num_workers: Data loading workers (default: 4)
+                - image_size: Target image size (default: 224)
+                - val_split: Validation split ratio (default: 0.15)
+                - test_split: Test split ratio (default: 0.15)
+                - use_metadata: Include metadata features (default: False)
+                - use_weighted_sampling: Use weighted sampling (default: True)
+                - seed: Random seed for reproducibility (default: 42)
         """
         self.config = config
         self.data_dir = config.get('data_dir', 'HAM10000')
@@ -35,8 +86,23 @@ class DataModule:
         self.class_mapping = None
         self.num_classes = None
     
-    def setup(self, stage: Optional[str] = None):
-        """Set up datasets for train/val/test."""
+    def setup(self, stage: Optional[str] = None) -> None:
+        """Set up datasets for train/val/test splits.
+        
+        Creates stratified data splits and initializes datasets with
+        appropriate transforms for each stage. This method must be
+        called before accessing any dataloaders.
+        
+        Args:
+            stage: Optional stage ('fit', 'test', or None for both)
+                - 'fit': Setup only train/val datasets
+                - 'test': Setup only test dataset
+                - None: Setup all datasets
+        
+        Side Effects:
+            - Creates train_dataset, val_dataset, test_dataset
+            - Sets class_mapping and num_classes attributes
+        """
         # Create data splits
         train_ids, val_ids, test_ids = create_data_splits(
             self.metadata_path,

@@ -113,14 +113,14 @@ The model should achieve similar performance with the same configuration.
     print("\n" + "="*60)
     print("CHECKPOINT SAVE SUMMARY")
     print("="*60)
-    print(f"\n✅ Created checkpoint structure at: {best_path}")
-    print(f"📊 Training results preserved:")
+    print(f"\nCreated checkpoint structure at: {best_path}")
+    print(f"Training results preserved:")
     print(f"   - Test AUC: {final_metrics.get('auc_macro', 0):.4f}")
     print(f"   - Test Accuracy: {final_metrics.get('accuracy', 0):.4f}")
     print(f"   - Test Balanced Accuracy: {final_metrics.get('balanced_accuracy', 0):.4f}")
-    print(f"\n⚠️  Note: Actual trained weights were not saved during training")
+    print(f"\nNote: Actual trained weights were not saved during training")
     print(f"   To get a trained model, please retrain using: python train.py")
-    print(f"\n📁 All results saved in: checkpoints/")
+    print(f"\nAll results saved in: checkpoints/")
     print("="*60)
 
 if __name__ == "__main__":

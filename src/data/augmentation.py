@@ -1,13 +1,70 @@
+"""Data augmentation module for skin lesion images.
+
+This module provides comprehensive augmentation pipelines specifically
+designed for dermoscopic images. The augmentations help improve model
+generalization by simulating various imaging conditions and variations
+found in clinical practice.
+
+Key augmentations:
+    - Geometric: rotation, flips, affine transformations
+    - Color: brightness, contrast, saturation adjustments
+    - Noise: Gaussian noise, blur effects
+    - Dropout: Coarse dropout for occlusion robustness
+    - Test-time augmentation: Multiple predictions for confidence
+
+The augmentations are carefully chosen to:
+    1. Preserve diagnostic features
+    2. Simulate real-world variations
+    3. Handle class imbalance through data diversity
+    4. Avoid unrealistic transformations
+"""
+
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 import cv2
+from typing import Optional
 
 
 class AugmentationFactory:
-    """Factory class for creating augmentation pipelines"""
+    """Factory class for creating augmentation pipelines.
+    
+    Provides static methods to create consistent augmentation
+    pipelines for different stages of model development:
+    - Training: Heavy augmentation for regularization
+    - Validation: Minimal augmentation (only necessary preprocessing)
+    - Testing: No augmentation (except normalization)
+    - TTA: Multiple augmented versions for ensemble predictions
+    
+    All pipelines use ImageNet normalization statistics for
+    compatibility with pretrained models.
+    """
 
     @staticmethod
     def get_train_transforms(image_size: int = 224) -> A.Compose:
+        """Create comprehensive training augmentation pipeline.
+        
+        Applies various augmentations to increase data diversity and
+        improve model generalization. The pipeline includes geometric,
+        color, and noise augmentations carefully tuned for dermoscopic images.
+        
+        Args:
+            image_size: Target image size (default: 224)
+        
+        Returns:
+            A.Compose: Albumentations composition pipeline including:
+                - Random resized crop (80-100% of original)
+                - Rotation (±30°)
+                - Horizontal/vertical flips
+                - Color jitter variations
+                - Gaussian noise/blur
+                - Coarse dropout (simulates occlusions)
+                - ImageNet normalization
+                - Tensor conversion
+        
+        Note:
+            Augmentation probabilities are tuned based on empirical
+            results on the HAM10000 dataset.
+        """
         return A.Compose(
             [
                 A.RandomResizedCrop(
@@ -57,6 +114,20 @@ class AugmentationFactory:
 
     @staticmethod
     def get_val_transforms(image_size: int = 224) -> A.Compose:
+        """Create validation/test augmentation pipeline.
+        
+        Minimal augmentation for validation and test sets. Only applies
+        necessary preprocessing: resizing and normalization.
+        
+        Args:
+            image_size: Target image size (default: 224)
+        
+        Returns:
+            A.Compose: Minimal pipeline with:
+                - Center crop to target size
+                - ImageNet normalization
+                - Tensor conversion
+        """
         return A.Compose(
             [
                 A.Resize(height=image_size, width=image_size),

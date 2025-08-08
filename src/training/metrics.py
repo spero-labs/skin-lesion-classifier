@@ -1,3 +1,29 @@
+"""Metrics calculation module for model evaluation.
+
+This module provides comprehensive metrics for evaluating skin lesion
+classification models. It calculates both overall and per-class metrics
+essential for medical image classification assessment.
+
+Key metrics:
+    - Accuracy and balanced accuracy
+    - Sensitivity (recall) and specificity
+    - Precision and F1-score
+    - AUC-ROC (Area Under ROC Curve)
+    - Cohen's Kappa for inter-rater agreement
+    - Confusion matrix
+
+The metrics are particularly important for:
+    1. Assessing performance on imbalanced datasets
+    2. Evaluating clinical relevance (sensitivity/specificity)
+    3. Comparing with published benchmarks
+    4. Model selection and hyperparameter tuning
+
+Typical usage:
+    calculator = MetricsCalculator(num_classes=7)
+    calculator.update(predictions, targets, probabilities)
+    metrics = calculator.compute()
+"""
+
 import torch
 import numpy as np
 from sklearn.metrics import (
@@ -9,29 +35,51 @@ from sklearn.metrics import (
     cohen_kappa_score,
     classification_report,
 )
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 import logging
 
 logger = logging.getLogger(__name__)
 
 
 class MetricsCalculator:
-    """Calculate and track training metrics."""
+    """Calculate and track comprehensive classification metrics.
     
-    def __init__(self, num_classes: int, class_names: Optional[List[str]] = None):
-        """
-        Initialize metrics calculator.
+    Accumulates predictions and targets over batches to compute
+    metrics at the end of an epoch. Particularly designed for
+    multi-class medical image classification with class imbalance.
+    
+    The calculator tracks:
+        - Class predictions and ground truth labels
+        - Prediction probabilities for AUC calculation
+        - Per-class and macro-averaged metrics
+    
+    Attributes:
+        num_classes (int): Number of classification classes
+        class_names (List[str]): Names of classes for reporting
+        predictions (List): Accumulated predictions
+        targets (List): Accumulated ground truth labels
+        probabilities (List): Accumulated prediction probabilities
+    """
+    
+    def __init__(self, num_classes: int, class_names: Optional[List[str]] = None) -> None:
+        """Initialize the metrics calculator.
         
         Args:
-            num_classes: Number of classes
-            class_names: Optional list of class names
+            num_classes: Number of classes in the classification task
+            class_names: Optional list of class names for readable output
+                Default: ['Class_0', 'Class_1', ...]
+                For HAM10000: ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
         """
         self.num_classes = num_classes
         self.class_names = class_names or [f"Class_{i}" for i in range(num_classes)]
         self.reset()
     
-    def reset(self):
-        """Reset all tracked metrics."""
+    def reset(self) -> None:
+        """Reset all tracked metrics for a new epoch.
+        
+        Clears accumulated predictions, targets, and probabilities.
+        Should be called at the beginning of each epoch.
+        """
         self.predictions = []
         self.targets = []
         self.probabilities = []
@@ -41,13 +89,17 @@ class MetricsCalculator:
         preds: torch.Tensor,
         targets: torch.Tensor,
         probs: Optional[torch.Tensor] = None
-    ):
-        """
-        Update metrics with new batch.
+    ) -> None:
+        """Update metrics accumulator with a new batch.
+        
+        Appends batch predictions and targets to internal lists
+        for later computation. Handles both CPU and GPU tensors.
         
         Args:
-            preds: Predicted class indices
-            targets: True class indices
+            preds: Predicted class indices of shape (batch_size,)
+            targets: True class indices of shape (batch_size,)
+            probs: Optional prediction probabilities of shape (batch_size, num_classes)
+                Required for AUC-ROC calculation
             probs: Optional prediction probabilities
         """
         self.predictions.extend(preds.cpu().numpy().tolist())

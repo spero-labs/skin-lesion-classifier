@@ -1,14 +1,14 @@
 # Training Analysis Report
 ## Executive Summary
 The model achieved **Excellent** performance with:
-- **AUC-ROC**: 0.9737 (Target: >0.90 ✅)
+- **AUC-ROC**: 0.9737 (Target: >0.90 - Achieved)
 - **Accuracy**: 0.8430
-- **Balanced Accuracy**: 0.8162 (Target: >0.85 ⚠️)
+- **Balanced Accuracy**: 0.8162 (Target: >0.85 - Close)
 
 ## Training Behavior Analysis
-- **Overfitting**: Moderate (gap 5-10%) ⚠️
+- **Overfitting**: Moderate (gap 5-10%)
 - **Learning Progress**: 0.0375 AUC improvement over training
-- **Convergence**: Model has converged (std < 0.01 in last 10 epochs) ✅
+- **Convergence**: Model has converged (std < 0.01 in last 10 epochs)
 
 ## Per-Class Performance Analysis
 ### Best Performing Classes:
@@ -25,7 +25,7 @@ The model achieved **Excellent** performance with:
 ### Melanoma Detection Performance:
 - **Sensitivity**: 0.820 (ability to detect melanoma)
 - **Specificity**: 0.908 (ability to rule out melanoma)
-- **Clinical Assessment**: Good sensitivity for melanoma detection ✅
+- **Clinical Assessment**: Good sensitivity for melanoma detection
 
 ## Recommendations for Improvement
 - **Extended Training**: Model still improving, consider more epochs

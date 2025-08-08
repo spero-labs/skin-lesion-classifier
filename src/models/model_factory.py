@@ -1,3 +1,32 @@
+"""Model factory module for centralized model creation and management.
+
+This module provides a factory pattern implementation for creating different
+model architectures with consistent configuration. It maintains a registry of
+available models and handles the complexity of model instantiation, including
+architecture-specific parameters and naming conventions.
+
+The factory pattern provides:
+    - Centralized model creation logic
+    - Consistent configuration interface
+    - Easy addition of new architectures
+    - Model name validation and mapping
+
+Supported architectures:
+    - EfficientNet family (B0-B3)
+    - ResNet with attention (50, 101, 152)
+    - Vision Transformers (Small, Base)
+    - Swin Transformers (Tiny, Small, Base)
+    - Ensemble models
+
+Typical usage:
+    model = ModelFactory.create_model(
+        architecture='efficientnet_b1',
+        num_classes=7,
+        pretrained=True,
+        dropout=0.3
+    )
+"""
+
 from typing import Dict, Any
 from .architectures import (
     EfficientNetModel,
@@ -13,7 +42,23 @@ logger = logging.getLogger(__name__)
 
 
 class ModelFactory:
-    """Factory class for creating models."""
+    """Factory class for creating and configuring models.
+    
+    Centralizes model creation logic and provides a consistent interface
+    for instantiating different architectures. Handles the mapping between
+    user-friendly model names and the actual model implementations.
+    
+    The factory maintains:
+        - Registry of available model classes
+        - Mapping of model names to timm model identifiers
+        - Validation of model configurations
+    
+    This design pattern simplifies:
+        - Adding new architectures
+        - Switching between models
+        - Maintaining consistent configuration
+        - Model versioning and updates
+    """
     
     # Model registry
     _models = {

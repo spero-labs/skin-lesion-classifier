@@ -8,7 +8,7 @@ The Skin Lesion Classification System is organized into modular components for m
 ```
 skin-lesion-classifier/
 │
-├── 📁 src/                      # Main source code
+├── src/                      # Main source code
 │   ├── data/                    # Data pipeline
 │   │   ├── dataset.py          # PyTorch dataset implementation
 │   │   ├── dataloader.py       # DataLoader with sampling strategies
@@ -43,7 +43,7 @@ skin-lesion-classifier/
 │       ├── visualization.py    # Visualization tools
 │       └── interpretability.py # Model interpretability (Grad-CAM)
 │
-├── 📁 scripts/                  # Organized utility scripts
+├── scripts/                  # Organized utility scripts
 │   ├── training/               # Training-related scripts
 │   │   ├── train.py           # Main training script
 │   │   ├── quick_train.sh     # Quick training (10 epochs)
@@ -60,41 +60,41 @@ skin-lesion-classifier/
 │   └── deployment/             # Deployment utilities
 │       └── main.py            # Application entry point
 │
-├── 📁 configs/                  # Configuration files
+├── configs/                  # Configuration files
 │   └── config.yaml             # Hydra configuration
 │
-├── 📁 tests/                    # Unit and integration tests
+├── tests/                    # Unit and integration tests
 │   ├── test_data/              # Data pipeline tests
 │   ├── test_models/            # Model tests
 │   └── test_training/          # Training tests
 │
-├── 📁 notebooks/                # Jupyter notebooks
+├── notebooks/                # Jupyter notebooks
 │   ├── EDA.ipynb               # Exploratory data analysis
 │   └── model_evaluation.ipynb  # Model evaluation
 │
-├── 📁 checkpoints/              # Saved models
+├── checkpoints/              # Saved models
 │   ├── checkpoint_best.pth     # Best model weights
 │   ├── checkpoint_last.pth     # Latest checkpoint
 │   └── training_metrics.json   # Training history
 │
-├── 📁 visualizations/           # Generated plots
+├── visualizations/           # Generated plots
 │   ├── training_curves.png     # Training/validation curves
 │   ├── performance_analysis.png # Performance metrics
 │   └── class_imbalance_analysis.png # Class distribution
 │
-├── 📁 HAM10000/                 # Dataset
+├── HAM10000/                 # Dataset
 │   ├── HAM10000_images_part_1/ # Image files (part 1)
 │   ├── HAM10000_images_part_2/ # Image files (part 2)
 │   └── HAM10000_metadata.csv   # Metadata
 │
-├── 📁 outputs/                  # Hydra outputs
+├── outputs/                  # Hydra outputs
 │   └── YYYY-MM-DD/             # Timestamped runs
 │
-├── 📄 Makefile                  # Command interface
-├── 📄 requirements.txt          # Python dependencies
-├── 📄 README.md                 # Project documentation
-├── 📄 CLAUDE.md                 # Development guidelines
-└── 📄 .gitignore               # Git ignore rules
+├── Makefile                  # Command interface
+├── requirements.txt          # Python dependencies
+├── README.md                 # Project documentation
+├── CLAUDE.md                 # Development guidelines
+└── .gitignore               # Git ignore rules
 ```
 
 ## Key Components

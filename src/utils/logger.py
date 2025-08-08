@@ -1,3 +1,35 @@
+"""Logging utilities module for training and debugging.
+
+This module provides centralized logging configuration for the entire
+skin lesion classification system. It sets up structured logging with
+both console and file outputs, ensuring consistent log formatting and
+proper log management across all components.
+
+Key features:
+    - Dual output: Console and file logging
+    - Configurable log levels
+    - Automatic log directory creation
+    - Consistent timestamp formatting
+    - Colored console output (optional)
+
+The logging system helps with:
+    1. Training progress monitoring
+    2. Error tracking and debugging
+    3. Performance metric logging
+    4. System state tracking
+    5. Reproducibility through detailed logs
+
+Typical usage:
+    logger = setup_logger(\n        name='training',
+        log_file='logs/training.log',
+        level=logging.INFO
+    )
+    
+    logger.info('Starting training...')
+    logger.debug('Model parameters: %d', param_count)
+    logger.error('Failed to load checkpoint: %s', error)
+"""
+
 import logging
 import sys
 from pathlib import Path

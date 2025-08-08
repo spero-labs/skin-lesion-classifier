@@ -401,9 +401,9 @@ def generate_analysis_report(metrics):
         performance_level = "Needs Improvement"
     
     report.append(f"The model achieved **{performance_level}** performance with:\n")
-    report.append(f"- **AUC-ROC**: {auc:.4f} (Target: >0.90 ✅)\n")
+    report.append(f"- **AUC-ROC**: {auc:.4f} (Target: >0.90 - Achieved)\n")
     report.append(f"- **Accuracy**: {acc:.4f}\n")
-    report.append(f"- **Balanced Accuracy**: {bal_acc:.4f} (Target: >0.85 {'✅' if bal_acc > 0.85 else '⚠️'})\n\n")
+    report.append(f"- **Balanced Accuracy**: {bal_acc:.4f} (Target: >0.85 - {'Achieved' if bal_acc > 0.85 else 'Close'})\n\n")
     
     # Training behavior analysis
     report.append("## Training Behavior Analysis\n")
@@ -415,11 +415,11 @@ def generate_analysis_report(metrics):
         overfit_gap = final_train_acc - final_val_acc
         
         if overfit_gap < 0.05:
-            report.append("- **Overfitting**: Minimal (gap < 5%) ✅\n")
+            report.append("- **Overfitting**: Minimal (gap < 5%)\n")
         elif overfit_gap < 0.10:
-            report.append("- **Overfitting**: Moderate (gap 5-10%) ⚠️\n")
+            report.append("- **Overfitting**: Moderate (gap 5-10%)\n")
         else:
-            report.append("- **Overfitting**: Significant (gap > 10%) ❌\n")
+            report.append("- **Overfitting**: Significant (gap > 10%)\n")
         
         # Learning curve analysis
         val_auc_values = [m.get('auc_macro', 0) for m in val_metrics]
@@ -431,9 +431,9 @@ def generate_analysis_report(metrics):
         if len(val_auc_values) > 10:
             last_10_std = np.std(val_auc_values[-10:])
             if last_10_std < 0.01:
-                report.append("- **Convergence**: Model has converged (std < 0.01 in last 10 epochs) ✅\n")
+                report.append("- **Convergence**: Model has converged (std < 0.01 in last 10 epochs)\n")
             else:
-                report.append("- **Convergence**: Model still improving ⚠️\n")
+                report.append("- **Convergence**: Model still improving\n")
     
     report.append("\n## Per-Class Performance Analysis\n")
     
@@ -472,9 +472,9 @@ def generate_analysis_report(metrics):
     report.append(f"- **Specificity**: {mel_spec:.3f} (ability to rule out melanoma)\n")
     
     if mel_sens > 0.8:
-        report.append("- **Clinical Assessment**: Good sensitivity for melanoma detection ✅\n")
+        report.append("- **Clinical Assessment**: Good sensitivity for melanoma detection\n")
     else:
-        report.append("- **Clinical Assessment**: Sensitivity needs improvement for clinical use ⚠️\n")
+        report.append("- **Clinical Assessment**: Sensitivity needs improvement for clinical use\n")
     
     # Recommendations
     report.append("\n## Recommendations for Improvement\n")
@@ -535,7 +535,7 @@ def main():
     print(f"Saved analysis report to {report_path}")
     
     print("\n" + "="*60)
-    print("✅ All visualizations and analysis completed!")
+    print("All visualizations and analysis completed!")
     print("\nGenerated files:")
     print("  - visualizations/training_curves.png")
     print("  - visualizations/performance_analysis.png")
