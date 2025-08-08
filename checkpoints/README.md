@@ -16,7 +16,7 @@ The checkpoint files here contain:
 ## To Retrain
 To reproduce these results, run:
 ```bash
-python train.py
+make train
 ```
 
 The model should achieve similar performance with the same configuration.

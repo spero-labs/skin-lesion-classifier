@@ -58,7 +58,9 @@ This will:
 ### Retrain the Model
 To reproduce these excellent results with saved weights:
 ```bash
-python train.py
+make train
+# or directly:
+python scripts/training/train.py
 ```
 
 The configuration has been fixed to properly save checkpoints, so future training runs will save the model weights correctly.
@@ -70,7 +72,7 @@ The configuration has been fixed to properly save checkpoints, so future trainin
 
 ## 🚀 Next Steps
 
-1. **Retrain with Fixed Checkpoint Saving**: Run `python train.py` to get a model with saved weights
+1. **Retrain with Fixed Checkpoint Saving**: Run `make train` to get a model with saved weights
 2. **Deploy the Model**: Once retrained, use the saved checkpoint for inference
 3. **API Deployment**: Complete the FastAPI implementation in `src/api/app.py`
 4. **Model Optimization**: Implement quantization in `src/optimization/`
