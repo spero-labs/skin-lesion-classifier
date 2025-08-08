@@ -1,0 +1,286 @@
+[2025-08-07 14:33:40,094][training][INFO] - Configuration:
+[2025-08-07 14:33:40,095][training][INFO] - data:
+  data_dir: HAM10000
+  metadata_path: HAM10000/HAM10000_metadata.csv
+  image_size: 224
+  batch_size: 32
+  num_workers: 4
+  val_split: 0.15
+  test_split: 0.15
+  use_metadata: false
+  use_weighted_sampling: true
+  seed: 42
+model:
+  architecture: efficientnet_b0
+  pretrained: true
+  num_classes: 7
+  dropout: 0.3
+  use_metadata: false
+training:
+  epochs: 50
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  optimizer: adamw
+  scheduler: cosine
+  early_stopping_patience: 10
+  gradient_clip_val: 1.0
+  loss: focal
+experiment:
+  name: baseline_efficientnet_b0
+  project_name: skin-lesion-classification
+  seed: 42
+  device: mps
+  use_wandb: false
+  checkpoint_dir: checkpoints
+inference:
+  tta_enabled: true
+  tta_transforms: 5
+  confidence_threshold: 0.7
+  batch_size: 32
+advanced:
+  use_ensemble: false
+  ensemble_models:
+  - efficientnet_b0
+  - efficientnet_b1
+  - resnet50
+  ensemble_weights: null
+targets:
+  min_val_auc: 0.9
+  min_val_accuracy: 0.85
+  max_inference_time_ms: 100
+  max_model_size_mb: 50
+
+[2025-08-07 14:33:40,095][training][INFO] - Setting up data module...
+[2025-08-07 14:33:40,113][src.data.dataset][INFO] - Data splits - Train: 7009, Val: 1503, Test: 1503
+[2025-08-07 14:33:40,126][src.data.dataset][INFO] - Class mapping: {'akiec': 0, 'bcc': 1, 'bkl': 2, 'df': 3, 'mel': 4, 'nv': 5, 'vasc': 6}
+[2025-08-07 14:33:40,289][src.data.dataset][INFO] - Loaded 7009 images for train set
+[2025-08-07 14:33:40,290][src.data.dataset][INFO] - Class distribution: {'nv': 4693, 'mel': 779, 'bkl': 769, 'bcc': 360, 'akiec': 229, 'vasc': 99, 'df': 80}
+[2025-08-07 14:33:40,333][src.data.dataset][INFO] - Loaded 1503 images for val set
+[2025-08-07 14:33:40,333][src.data.dataset][INFO] - Class distribution: {'nv': 1006, 'mel': 167, 'bkl': 165, 'bcc': 77, 'akiec': 49, 'vasc': 21, 'df': 18}
+[2025-08-07 14:33:40,374][src.data.dataset][INFO] - Loaded 1503 images for test set
+[2025-08-07 14:33:40,374][src.data.dataset][INFO] - Class distribution: {'nv': 1006, 'mel': 167, 'bkl': 165, 'bcc': 77, 'akiec': 49, 'vasc': 22, 'df': 17}
+[2025-08-07 14:33:40,374][src.data.dataloader][INFO] - Dataset setup complete. Classes: 7
+[2025-08-07 14:33:40,374][training][INFO] - Creating model: efficientnet_b0
+[2025-08-07 14:33:40,419][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/efficientnet_b0.ra_in1k)
+[2025-08-07 14:33:40,528][timm.models._hub][INFO] - [timm/efficientnet_b0.ra_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+[2025-08-07 14:33:40,559][src.models.model_factory][INFO] - Created efficientnet_b0 model with 7 classes
+[2025-08-07 14:33:40,559][src.models.model_factory][INFO] - Model parameters: 5,618,564
+[2025-08-07 14:33:40,559][src.models.model_factory][INFO] - Trainable parameters: 5,618,564
+[2025-08-07 14:33:40,630][training][INFO] - Starting training...
+[2025-08-07 14:33:40,734][src.training.trainer][INFO] - Starting training...
+[2025-08-07 14:33:40,734][src.training.trainer][INFO] - Device: mps
+[2025-08-07 14:33:40,735][src.training.trainer][INFO] - Model parameters: 5,618,564
+[2025-08-07 14:33:40,735][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 14:33:40,735][src.training.trainer][INFO] - Epoch 1/50
+[2025-08-07 14:35:35,651][src.training.trainer][INFO] - Train - Loss: 0.7181, Acc: 0.5695, AUC: 0.8791
+[2025-08-07 14:35:35,652][src.training.trainer][INFO] - Val - Loss: 0.3998, Acc: 0.7119, AUC: 0.9330
+[2025-08-07 14:35:35,652][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 14:35:35,652][src.training.callbacks][INFO] - Learning rate: 9.99e-05
+[2025-08-07 14:35:35,652][src.training.callbacks][INFO] - EarlyStopping: Initial best score = 0.9330
+[2025-08-07 14:35:35,652][src.training.trainer][INFO] - New best validation AUC: 0.9330
+[2025-08-07 14:35:35,652][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 14:35:35,653][src.training.trainer][INFO] - Epoch 2/50
+[2025-08-07 14:37:20,751][src.training.trainer][INFO] - Train - Loss: 0.4583, Acc: 0.6946, AUC: 0.9352
+[2025-08-07 14:37:20,752][src.training.trainer][INFO] - Val - Loss: 0.3248, Acc: 0.7438, AUC: 0.9556
+[2025-08-07 14:37:20,752][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 14:37:20,752][src.training.callbacks][INFO] - Learning rate: 9.96e-05
+[2025-08-07 14:37:20,752][src.training.callbacks][INFO] - EarlyStopping: New best score = 0.9556
+[2025-08-07 14:37:20,752][src.training.trainer][INFO] - New best validation AUC: 0.9556
+[2025-08-07 14:37:20,752][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 14:37:20,752][src.training.trainer][INFO] - Epoch 3/50
+[2025-08-07 14:39:08,542][src.training.trainer][INFO] - Train - Loss: 0.3759, Acc: 0.7383, AUC: 0.9505
+[2025-08-07 14:39:08,543][src.training.trainer][INFO] - Val - Loss: 0.3475, Acc: 0.6866, AUC: 0.9525
+[2025-08-07 14:39:08,543][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 14:39:08,543][src.training.callbacks][INFO] - Learning rate: 9.91e-05
+[2025-08-07 14:39:08,543][src.training.callbacks][INFO] - EarlyStopping: No improvement for 1 epochs
+[2025-08-07 14:39:08,543][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 14:39:08,544][src.training.trainer][INFO] - Epoch 4/50
+[2025-08-07 14:41:03,863][src.training.trainer][INFO] - Train - Loss: 0.3139, Acc: 0.7687, AUC: 0.9617
+[2025-08-07 14:41:03,864][src.training.trainer][INFO] - Val - Loss: 0.2968, Acc: 0.7438, AUC: 0.9605
+[2025-08-07 14:41:03,865][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 14:41:03,865][src.training.callbacks][INFO] - Learning rate: 9.84e-05
+[2025-08-07 14:41:03,865][src.training.callbacks][INFO] - EarlyStopping: New best score = 0.9605
+[2025-08-07 14:41:03,865][src.training.trainer][INFO] - New best validation AUC: 0.9605
+[2025-08-07 14:41:03,865][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 14:41:03,865][src.training.trainer][INFO] - Epoch 5/50
+[2025-08-07 14:42:54,588][src.training.trainer][INFO] - Train - Loss: 0.2859, Acc: 0.7858, AUC: 0.9662
+[2025-08-07 14:42:54,589][src.training.trainer][INFO] - Val - Loss: 0.2319, Acc: 0.7791, AUC: 0.9635
+[2025-08-07 14:42:54,589][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 14:42:54,589][src.training.callbacks][INFO] - Learning rate: 9.76e-05
+[2025-08-07 14:42:54,589][src.training.callbacks][INFO] - EarlyStopping: New best score = 0.9635
+[2025-08-07 14:42:54,589][src.training.trainer][INFO] - New best validation AUC: 0.9635
+[2025-08-07 14:42:54,589][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 14:42:54,589][src.training.trainer][INFO] - Epoch 6/50
+[2025-08-07 14:44:44,896][src.training.trainer][INFO] - Train - Loss: 0.2496, Acc: 0.8014, AUC: 0.9713
+[2025-08-07 14:44:44,897][src.training.trainer][INFO] - Val - Loss: 0.2153, Acc: 0.8244, AUC: 0.9675
+[2025-08-07 14:44:44,897][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 14:44:44,897][src.training.callbacks][INFO] - Learning rate: 9.65e-05
+[2025-08-07 14:44:44,897][src.training.callbacks][INFO] - EarlyStopping: New best score = 0.9675
+[2025-08-07 14:44:44,897][src.training.trainer][INFO] - New best validation AUC: 0.9675
+[2025-08-07 14:44:44,897][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 14:44:44,897][src.training.trainer][INFO] - Epoch 7/50
+[2025-08-07 14:46:34,993][src.training.trainer][INFO] - Train - Loss: 0.2323, Acc: 0.8152, AUC: 0.9746
+[2025-08-07 14:46:34,994][src.training.trainer][INFO] - Val - Loss: 0.2362, Acc: 0.7598, AUC: 0.9659
+[2025-08-07 14:46:34,994][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 14:46:34,994][src.training.callbacks][INFO] - Learning rate: 9.53e-05
+[2025-08-07 14:46:34,994][src.training.callbacks][INFO] - EarlyStopping: No improvement for 1 epochs
+[2025-08-07 14:46:34,994][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 14:46:34,994][src.training.trainer][INFO] - Epoch 8/50
+[2025-08-07 14:48:24,983][src.training.trainer][INFO] - Train - Loss: 0.2213, Acc: 0.8343, AUC: 0.9780
+[2025-08-07 14:48:24,984][src.training.trainer][INFO] - Val - Loss: 0.2122, Acc: 0.8303, AUC: 0.9681
+[2025-08-07 14:48:24,984][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 14:48:24,984][src.training.callbacks][INFO] - Learning rate: 9.39e-05
+[2025-08-07 14:48:24,984][src.training.callbacks][INFO] - EarlyStopping: New best score = 0.9681
+[2025-08-07 14:48:24,984][src.training.trainer][INFO] - New best validation AUC: 0.9681
+[2025-08-07 14:48:24,984][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 14:48:24,984][src.training.trainer][INFO] - Epoch 9/50
+[2025-08-07 14:50:15,081][src.training.trainer][INFO] - Train - Loss: 0.2196, Acc: 0.8340, AUC: 0.9779
+[2025-08-07 14:50:15,082][src.training.trainer][INFO] - Val - Loss: 0.2057, Acc: 0.8210, AUC: 0.9702
+[2025-08-07 14:50:15,082][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 14:50:15,083][src.training.callbacks][INFO] - Learning rate: 9.23e-05
+[2025-08-07 14:50:15,083][src.training.callbacks][INFO] - EarlyStopping: New best score = 0.9702
+[2025-08-07 14:50:15,083][src.training.trainer][INFO] - New best validation AUC: 0.9702
+[2025-08-07 14:50:15,083][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 14:50:15,083][src.training.trainer][INFO] - Epoch 10/50
+[2025-08-07 14:52:05,204][src.training.trainer][INFO] - Train - Loss: 0.1821, Acc: 0.8553, AUC: 0.9831
+[2025-08-07 14:52:05,205][src.training.trainer][INFO] - Val - Loss: 0.1980, Acc: 0.8443, AUC: 0.9731
+[2025-08-07 14:52:05,205][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 14:52:05,205][src.training.callbacks][INFO] - Learning rate: 9.05e-05
+[2025-08-07 14:52:05,205][src.training.callbacks][INFO] - EarlyStopping: New best score = 0.9731
+[2025-08-07 14:52:05,205][src.training.trainer][INFO] - New best validation AUC: 0.9731
+[2025-08-07 14:52:05,205][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 14:52:05,205][src.training.trainer][INFO] - Epoch 11/50
+[2025-08-07 14:53:55,311][src.training.trainer][INFO] - Train - Loss: 0.1875, Acc: 0.8563, AUC: 0.9824
+[2025-08-07 14:53:55,312][src.training.trainer][INFO] - Val - Loss: 0.2161, Acc: 0.7937, AUC: 0.9709
+[2025-08-07 14:53:55,313][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 14:53:55,313][src.training.callbacks][INFO] - Learning rate: 8.86e-05
+[2025-08-07 14:53:55,313][src.training.callbacks][INFO] - EarlyStopping: No improvement for 1 epochs
+[2025-08-07 14:53:55,313][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 14:53:55,313][src.training.trainer][INFO] - Epoch 12/50
+[2025-08-07 14:55:45,537][src.training.trainer][INFO] - Train - Loss: 0.1734, Acc: 0.8612, AUC: 0.9841
+[2025-08-07 14:55:45,538][src.training.trainer][INFO] - Val - Loss: 0.2332, Acc: 0.7718, AUC: 0.9688
+[2025-08-07 14:55:45,538][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 14:55:45,539][src.training.callbacks][INFO] - Learning rate: 8.66e-05
+[2025-08-07 14:55:45,539][src.training.callbacks][INFO] - EarlyStopping: No improvement for 2 epochs
+[2025-08-07 14:55:45,539][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 14:55:45,539][src.training.trainer][INFO] - Epoch 13/50
+[2025-08-07 14:57:35,821][src.training.trainer][INFO] - Train - Loss: 0.1641, Acc: 0.8707, AUC: 0.9855
+[2025-08-07 14:57:35,822][src.training.trainer][INFO] - Val - Loss: 0.2157, Acc: 0.8210, AUC: 0.9707
+[2025-08-07 14:57:35,822][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 14:57:35,822][src.training.callbacks][INFO] - Learning rate: 8.44e-05
+[2025-08-07 14:57:35,822][src.training.callbacks][INFO] - EarlyStopping: No improvement for 3 epochs
+[2025-08-07 14:57:35,822][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 14:57:35,822][src.training.trainer][INFO] - Epoch 14/50
+[2025-08-07 14:59:26,000][src.training.trainer][INFO] - Train - Loss: 0.1624, Acc: 0.8684, AUC: 0.9862
+[2025-08-07 14:59:26,001][src.training.trainer][INFO] - Val - Loss: 0.1895, Acc: 0.8463, AUC: 0.9707
+[2025-08-07 14:59:26,001][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 14:59:26,001][src.training.callbacks][INFO] - Learning rate: 8.21e-05
+[2025-08-07 14:59:26,001][src.training.callbacks][INFO] - EarlyStopping: No improvement for 4 epochs
+[2025-08-07 14:59:26,001][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 14:59:26,001][src.training.trainer][INFO] - Epoch 15/50
+[2025-08-07 15:01:16,317][src.training.trainer][INFO] - Train - Loss: 0.1488, Acc: 0.8814, AUC: 0.9876
+[2025-08-07 15:01:16,318][src.training.trainer][INFO] - Val - Loss: 0.1848, Acc: 0.8649, AUC: 0.9750
+[2025-08-07 15:01:16,318][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 15:01:16,319][src.training.callbacks][INFO] - Learning rate: 7.96e-05
+[2025-08-07 15:01:16,319][src.training.callbacks][INFO] - EarlyStopping: New best score = 0.9750
+[2025-08-07 15:01:16,319][src.training.trainer][INFO] - New best validation AUC: 0.9750
+[2025-08-07 15:01:16,319][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 15:01:16,319][src.training.trainer][INFO] - Epoch 16/50
+[2025-08-07 15:03:06,647][src.training.trainer][INFO] - Train - Loss: 0.1392, Acc: 0.8824, AUC: 0.9889
+[2025-08-07 15:03:06,648][src.training.trainer][INFO] - Val - Loss: 0.1797, Acc: 0.8377, AUC: 0.9761
+[2025-08-07 15:03:06,648][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 15:03:06,649][src.training.callbacks][INFO] - Learning rate: 7.70e-05
+[2025-08-07 15:03:06,649][src.training.callbacks][INFO] - EarlyStopping: New best score = 0.9761
+[2025-08-07 15:03:06,649][src.training.trainer][INFO] - New best validation AUC: 0.9761
+[2025-08-07 15:03:06,649][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 15:03:06,649][src.training.trainer][INFO] - Epoch 17/50
+[2025-08-07 15:04:56,896][src.training.trainer][INFO] - Train - Loss: 0.1380, Acc: 0.8840, AUC: 0.9892
+[2025-08-07 15:04:56,897][src.training.trainer][INFO] - Val - Loss: 0.1823, Acc: 0.8636, AUC: 0.9748
+[2025-08-07 15:04:56,898][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 15:04:56,898][src.training.callbacks][INFO] - Learning rate: 7.43e-05
+[2025-08-07 15:04:56,898][src.training.callbacks][INFO] - EarlyStopping: No improvement for 1 epochs
+[2025-08-07 15:04:56,898][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 15:04:56,898][src.training.trainer][INFO] - Epoch 18/50
+[2025-08-07 15:06:47,109][src.training.trainer][INFO] - Train - Loss: 0.1350, Acc: 0.8900, AUC: 0.9896
+[2025-08-07 15:06:47,110][src.training.trainer][INFO] - Val - Loss: 0.1814, Acc: 0.8576, AUC: 0.9764
+[2025-08-07 15:06:47,110][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 15:06:47,111][src.training.callbacks][INFO] - Learning rate: 7.16e-05
+[2025-08-07 15:06:47,111][src.training.callbacks][INFO] - EarlyStopping: New best score = 0.9764
+[2025-08-07 15:06:47,111][src.training.trainer][INFO] - New best validation AUC: 0.9764
+[2025-08-07 15:06:47,111][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 15:06:47,111][src.training.trainer][INFO] - Epoch 19/50
+[2025-08-07 15:08:37,415][src.training.trainer][INFO] - Train - Loss: 0.1207, Acc: 0.9102, AUC: 0.9912
+[2025-08-07 15:08:37,416][src.training.trainer][INFO] - Val - Loss: 0.1887, Acc: 0.8683, AUC: 0.9762
+[2025-08-07 15:08:37,416][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 15:08:37,416][src.training.callbacks][INFO] - Learning rate: 6.87e-05
+[2025-08-07 15:08:37,416][src.training.callbacks][INFO] - EarlyStopping: No improvement for 1 epochs
+[2025-08-07 15:08:37,416][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 15:08:37,416][src.training.trainer][INFO] - Epoch 20/50
+[2025-08-07 15:10:29,881][src.training.trainer][INFO] - Train - Loss: 0.1146, Acc: 0.9084, AUC: 0.9916
+[2025-08-07 15:10:29,882][src.training.trainer][INFO] - Val - Loss: 0.1926, Acc: 0.8330, AUC: 0.9754
+[2025-08-07 15:10:29,882][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 15:10:29,882][src.training.callbacks][INFO] - Learning rate: 6.58e-05
+[2025-08-07 15:10:29,882][src.training.callbacks][INFO] - EarlyStopping: No improvement for 2 epochs
+[2025-08-07 15:10:29,882][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 15:10:29,882][src.training.trainer][INFO] - Epoch 21/50
+[2025-08-07 15:12:16,687][src.training.trainer][INFO] - Train - Loss: 0.1177, Acc: 0.9048, AUC: 0.9918
+[2025-08-07 15:12:16,691][src.training.trainer][INFO] - Val - Loss: 0.1952, Acc: 0.8596, AUC: 0.9743
+[2025-08-07 15:12:16,691][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 15:12:16,691][src.training.callbacks][INFO] - Learning rate: 6.28e-05
+[2025-08-07 15:12:16,691][src.training.callbacks][INFO] - EarlyStopping: No improvement for 3 epochs
+[2025-08-07 15:12:16,691][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 15:12:16,691][src.training.trainer][INFO] - Epoch 22/50
+[2025-08-07 15:14:03,149][src.training.trainer][INFO] - Train - Loss: 0.1061, Acc: 0.9102, AUC: 0.9929
+[2025-08-07 15:14:03,150][src.training.trainer][INFO] - Val - Loss: 0.2010, Acc: 0.8397, AUC: 0.9740
+[2025-08-07 15:14:03,150][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 15:14:03,150][src.training.callbacks][INFO] - Learning rate: 5.98e-05
+[2025-08-07 15:14:03,150][src.training.callbacks][INFO] - EarlyStopping: No improvement for 4 epochs
+[2025-08-07 15:14:03,150][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 15:14:03,150][src.training.trainer][INFO] - Epoch 23/50
+[2025-08-07 15:15:51,243][src.training.trainer][INFO] - Train - Loss: 0.1035, Acc: 0.9171, AUC: 0.9932
+[2025-08-07 15:15:51,244][src.training.trainer][INFO] - Val - Loss: 0.1857, Acc: 0.8636, AUC: 0.9763
+[2025-08-07 15:15:51,244][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 15:15:51,244][src.training.callbacks][INFO] - Learning rate: 5.67e-05
+[2025-08-07 15:15:51,244][src.training.callbacks][INFO] - EarlyStopping: No improvement for 5 epochs
+[2025-08-07 15:15:51,244][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 15:15:51,244][src.training.trainer][INFO] - Epoch 24/50
+[2025-08-07 15:17:41,541][src.training.trainer][INFO] - Train - Loss: 0.0997, Acc: 0.9161, AUC: 0.9934
+[2025-08-07 15:17:41,542][src.training.trainer][INFO] - Val - Loss: 0.1903, Acc: 0.8649, AUC: 0.9760
+[2025-08-07 15:17:41,542][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 15:17:41,542][src.training.callbacks][INFO] - Learning rate: 5.36e-05
+[2025-08-07 15:17:41,542][src.training.callbacks][INFO] - EarlyStopping: No improvement for 6 epochs
+[2025-08-07 15:17:41,542][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 15:17:41,542][src.training.trainer][INFO] - Epoch 25/50
+[2025-08-07 15:19:27,753][src.training.trainer][INFO] - Train - Loss: 0.0976, Acc: 0.9194, AUC: 0.9941
+[2025-08-07 15:19:27,754][src.training.trainer][INFO] - Val - Loss: 0.2039, Acc: 0.8636, AUC: 0.9743
+[2025-08-07 15:19:27,754][src.training.callbacks][WARNING] - Metric 'val_auc_macro' not found in metrics
+[2025-08-07 15:19:27,755][src.training.callbacks][INFO] - Learning rate: 5.05e-05
+[2025-08-07 15:19:27,755][src.training.callbacks][INFO] - EarlyStopping: No improvement for 7 epochs
+[2025-08-07 15:19:27,755][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 15:19:27,755][src.training.trainer][INFO] - Epoch 26/50

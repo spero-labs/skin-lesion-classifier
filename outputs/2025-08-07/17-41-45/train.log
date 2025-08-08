@@ -1,0 +1,327 @@
+[2025-08-07 17:41:45,027][training][INFO] - Configuration:
+[2025-08-07 17:41:45,029][training][INFO] - data:
+  data_dir: HAM10000
+  metadata_path: HAM10000/HAM10000_metadata.csv
+  image_size: 224
+  batch_size: 32
+  num_workers: 0
+  val_split: 0.15
+  test_split: 0.15
+  use_metadata: false
+  use_weighted_sampling: true
+  seed: 42
+model:
+  architecture: efficientnet_b0
+  pretrained: true
+  num_classes: 7
+  dropout: 0.3
+  use_metadata: false
+training:
+  epochs: 50
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  optimizer: adamw
+  scheduler: cosine
+  early_stopping_patience: 10
+  gradient_clip_val: 1.0
+  loss: focal
+experiment:
+  name: baseline_efficientnet_b0
+  project_name: skin-lesion-classification
+  seed: 42
+  device: mps
+  use_wandb: false
+  checkpoint_dir: checkpoints
+inference:
+  tta_enabled: true
+  tta_transforms: 5
+  confidence_threshold: 0.7
+  batch_size: 32
+advanced:
+  use_ensemble: false
+  ensemble_models:
+  - efficientnet_b0
+  - efficientnet_b1
+  - resnet50
+  ensemble_weights: null
+targets:
+  min_val_auc: 0.9
+  min_val_accuracy: 0.85
+  max_inference_time_ms: 100
+  max_model_size_mb: 50
+
+[2025-08-07 17:41:45,029][training][INFO] - Setting up data module...
+[2025-08-07 17:41:45,044][src.data.dataset][INFO] - Data splits - Train: 7009, Val: 1503, Test: 1503
+[2025-08-07 17:41:45,054][src.data.dataset][INFO] - Class mapping: {'akiec': 0, 'bcc': 1, 'bkl': 2, 'df': 3, 'mel': 4, 'nv': 5, 'vasc': 6}
+[2025-08-07 17:41:45,218][src.data.dataset][INFO] - Loaded 7009 images for train set
+[2025-08-07 17:41:45,218][src.data.dataset][INFO] - Class distribution: {'nv': 4693, 'mel': 779, 'bkl': 769, 'bcc': 360, 'akiec': 229, 'vasc': 99, 'df': 80}
+[2025-08-07 17:41:45,259][src.data.dataset][INFO] - Loaded 1503 images for val set
+[2025-08-07 17:41:45,259][src.data.dataset][INFO] - Class distribution: {'nv': 1006, 'mel': 167, 'bkl': 165, 'bcc': 77, 'akiec': 49, 'vasc': 21, 'df': 18}
+[2025-08-07 17:41:45,301][src.data.dataset][INFO] - Loaded 1503 images for test set
+[2025-08-07 17:41:45,301][src.data.dataset][INFO] - Class distribution: {'nv': 1006, 'mel': 167, 'bkl': 165, 'bcc': 77, 'akiec': 49, 'vasc': 22, 'df': 17}
+[2025-08-07 17:41:45,301][src.data.dataloader][INFO] - Dataset setup complete. Classes: 7
+[2025-08-07 17:41:45,302][training][INFO] - Creating model: efficientnet_b0
+[2025-08-07 17:41:45,343][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/efficientnet_b0.ra_in1k)
+[2025-08-07 17:41:46,507][timm.models._hub][INFO] - [timm/efficientnet_b0.ra_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+[2025-08-07 17:41:46,544][src.models.model_factory][INFO] - Created efficientnet_b0 model with 7 classes
+[2025-08-07 17:41:46,545][src.models.model_factory][INFO] - Model parameters: 5,618,564
+[2025-08-07 17:41:46,545][src.models.model_factory][INFO] - Trainable parameters: 5,618,564
+[2025-08-07 17:41:46,620][training][INFO] - Starting training...
+[2025-08-07 17:41:46,724][src.training.trainer][INFO] - Starting training...
+[2025-08-07 17:41:46,724][src.training.trainer][INFO] - Device: mps
+[2025-08-07 17:41:46,724][src.training.trainer][INFO] - Model parameters: 5,618,564
+[2025-08-07 17:41:46,724][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 17:41:46,724][src.training.trainer][INFO] - Epoch 1/50
+[2025-08-07 17:43:10,177][src.training.trainer][INFO] - Train - Loss: 0.7100, Acc: 0.5646, AUC: 0.8811
+[2025-08-07 17:43:10,177][src.training.trainer][INFO] - Val - Loss: 0.3548, Acc: 0.7572, AUC: 0.9362
+[2025-08-07 17:43:10,369][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 17:43:10,513][src.training.callbacks][INFO] - Saved best checkpoint to checkpoints/checkpoint_best.pth
+[2025-08-07 17:43:10,695][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_001.pth
+[2025-08-07 17:43:10,696][src.training.callbacks][INFO] - Learning rate: 9.99e-05
+[2025-08-07 17:43:10,696][src.training.callbacks][INFO] - EarlyStopping: Initial best score = 0.9362
+[2025-08-07 17:43:10,696][src.training.trainer][INFO] - New best validation AUC: 0.9362
+[2025-08-07 17:43:10,696][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 17:43:10,696][src.training.trainer][INFO] - Epoch 2/50
+[2025-08-07 17:44:30,511][src.training.trainer][INFO] - Train - Loss: 0.4504, Acc: 0.6971, AUC: 0.9366
+[2025-08-07 17:44:30,511][src.training.trainer][INFO] - Val - Loss: 0.3490, Acc: 0.7285, AUC: 0.9557
+[2025-08-07 17:44:30,669][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 17:44:30,813][src.training.callbacks][INFO] - Saved best checkpoint to checkpoints/checkpoint_best.pth
+[2025-08-07 17:44:31,006][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_002.pth
+[2025-08-07 17:44:31,006][src.training.callbacks][INFO] - Learning rate: 9.96e-05
+[2025-08-07 17:44:31,006][src.training.callbacks][INFO] - EarlyStopping: New best score = 0.9557
+[2025-08-07 17:44:31,006][src.training.trainer][INFO] - New best validation AUC: 0.9557
+[2025-08-07 17:44:31,006][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 17:44:31,006][src.training.trainer][INFO] - Epoch 3/50
+[2025-08-07 17:45:49,393][src.training.trainer][INFO] - Train - Loss: 0.3797, Acc: 0.7326, AUC: 0.9501
+[2025-08-07 17:45:49,393][src.training.trainer][INFO] - Val - Loss: 0.3073, Acc: 0.7059, AUC: 0.9548
+[2025-08-07 17:45:49,640][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 17:45:49,815][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_003.pth
+[2025-08-07 17:45:49,816][src.training.callbacks][INFO] - Learning rate: 9.91e-05
+[2025-08-07 17:45:49,816][src.training.callbacks][INFO] - EarlyStopping: No improvement for 1 epochs
+[2025-08-07 17:45:49,816][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 17:45:49,816][src.training.trainer][INFO] - Epoch 4/50
+[2025-08-07 17:47:08,815][src.training.trainer][INFO] - Train - Loss: 0.3131, Acc: 0.7677, AUC: 0.9612
+[2025-08-07 17:47:08,816][src.training.trainer][INFO] - Val - Loss: 0.3096, Acc: 0.7585, AUC: 0.9585
+[2025-08-07 17:47:09,001][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 17:47:09,183][src.training.callbacks][INFO] - Saved best checkpoint to checkpoints/checkpoint_best.pth
+[2025-08-07 17:47:09,429][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_004.pth
+[2025-08-07 17:47:09,429][src.training.callbacks][INFO] - Learning rate: 9.84e-05
+[2025-08-07 17:47:09,429][src.training.callbacks][INFO] - EarlyStopping: New best score = 0.9585
+[2025-08-07 17:47:09,429][src.training.trainer][INFO] - New best validation AUC: 0.9585
+[2025-08-07 17:47:09,429][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 17:47:09,430][src.training.trainer][INFO] - Epoch 5/50
+[2025-08-07 17:48:29,369][src.training.trainer][INFO] - Train - Loss: 0.3048, Acc: 0.7757, AUC: 0.9634
+[2025-08-07 17:48:29,369][src.training.trainer][INFO] - Val - Loss: 0.2694, Acc: 0.7385, AUC: 0.9611
+[2025-08-07 17:48:29,528][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 17:48:29,670][src.training.callbacks][INFO] - Saved best checkpoint to checkpoints/checkpoint_best.pth
+[2025-08-07 17:48:29,846][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_005.pth
+[2025-08-07 17:48:29,846][src.training.callbacks][INFO] - Learning rate: 9.76e-05
+[2025-08-07 17:48:29,846][src.training.callbacks][INFO] - EarlyStopping: New best score = 0.9611
+[2025-08-07 17:48:29,846][src.training.trainer][INFO] - New best validation AUC: 0.9611
+[2025-08-07 17:48:29,846][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 17:48:29,847][src.training.trainer][INFO] - Epoch 6/50
+[2025-08-07 17:49:48,327][src.training.trainer][INFO] - Train - Loss: 0.2561, Acc: 0.7997, AUC: 0.9714
+[2025-08-07 17:49:48,328][src.training.trainer][INFO] - Val - Loss: 0.2488, Acc: 0.7858, AUC: 0.9674
+[2025-08-07 17:49:48,504][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 17:49:48,654][src.training.callbacks][INFO] - Saved best checkpoint to checkpoints/checkpoint_best.pth
+[2025-08-07 17:49:48,839][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_006.pth
+[2025-08-07 17:49:48,839][src.training.callbacks][INFO] - Learning rate: 9.65e-05
+[2025-08-07 17:49:48,839][src.training.callbacks][INFO] - EarlyStopping: New best score = 0.9674
+[2025-08-07 17:49:48,839][src.training.trainer][INFO] - New best validation AUC: 0.9674
+[2025-08-07 17:49:48,839][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 17:49:48,839][src.training.trainer][INFO] - Epoch 7/50
+[2025-08-07 17:51:06,017][src.training.trainer][INFO] - Train - Loss: 0.2307, Acc: 0.8209, AUC: 0.9746
+[2025-08-07 17:51:06,018][src.training.trainer][INFO] - Val - Loss: 0.2573, Acc: 0.7485, AUC: 0.9658
+[2025-08-07 17:51:06,172][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 17:51:06,343][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_007.pth
+[2025-08-07 17:51:06,344][src.training.callbacks][INFO] - Learning rate: 9.53e-05
+[2025-08-07 17:51:06,344][src.training.callbacks][INFO] - EarlyStopping: No improvement for 1 epochs
+[2025-08-07 17:51:06,344][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 17:51:06,344][src.training.trainer][INFO] - Epoch 8/50
+[2025-08-07 17:52:21,610][src.training.trainer][INFO] - Train - Loss: 0.2175, Acc: 0.8316, AUC: 0.9776
+[2025-08-07 17:52:21,610][src.training.trainer][INFO] - Val - Loss: 0.2036, Acc: 0.8463, AUC: 0.9702
+[2025-08-07 17:52:21,784][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 17:52:21,941][src.training.callbacks][INFO] - Saved best checkpoint to checkpoints/checkpoint_best.pth
+[2025-08-07 17:52:22,135][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_008.pth
+[2025-08-07 17:52:22,136][src.training.callbacks][INFO] - Learning rate: 9.39e-05
+[2025-08-07 17:52:22,136][src.training.callbacks][INFO] - EarlyStopping: New best score = 0.9702
+[2025-08-07 17:52:22,136][src.training.trainer][INFO] - New best validation AUC: 0.9702
+[2025-08-07 17:52:22,136][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 17:52:22,136][src.training.trainer][INFO] - Epoch 9/50
+[2025-08-07 17:53:41,489][src.training.trainer][INFO] - Train - Loss: 0.2116, Acc: 0.8376, AUC: 0.9786
+[2025-08-07 17:53:41,490][src.training.trainer][INFO] - Val - Loss: 0.2062, Acc: 0.8297, AUC: 0.9716
+[2025-08-07 17:53:41,651][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 17:53:41,808][src.training.callbacks][INFO] - Saved best checkpoint to checkpoints/checkpoint_best.pth
+[2025-08-07 17:53:41,996][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_009.pth
+[2025-08-07 17:53:41,996][src.training.callbacks][INFO] - Learning rate: 9.23e-05
+[2025-08-07 17:53:41,996][src.training.callbacks][INFO] - EarlyStopping: New best score = 0.9716
+[2025-08-07 17:53:41,996][src.training.trainer][INFO] - New best validation AUC: 0.9716
+[2025-08-07 17:53:41,996][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 17:53:41,996][src.training.trainer][INFO] - Epoch 10/50
+[2025-08-07 17:54:59,945][src.training.trainer][INFO] - Train - Loss: 0.1884, Acc: 0.8469, AUC: 0.9825
+[2025-08-07 17:54:59,945][src.training.trainer][INFO] - Val - Loss: 0.2080, Acc: 0.8410, AUC: 0.9717
+[2025-08-07 17:55:00,098][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 17:55:00,239][src.training.callbacks][INFO] - Saved best checkpoint to checkpoints/checkpoint_best.pth
+[2025-08-07 17:55:00,417][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_010.pth
+[2025-08-07 17:55:00,418][src.training.callbacks][INFO] - Learning rate: 9.05e-05
+[2025-08-07 17:55:00,418][src.training.callbacks][INFO] - EarlyStopping: New best score = 0.9717
+[2025-08-07 17:55:00,418][src.training.trainer][INFO] - New best validation AUC: 0.9717
+[2025-08-07 17:55:00,418][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 17:55:00,418][src.training.trainer][INFO] - Epoch 11/50
+[2025-08-07 17:56:12,548][src.training.trainer][INFO] - Train - Loss: 0.1903, Acc: 0.8519, AUC: 0.9816
+[2025-08-07 17:56:12,548][src.training.trainer][INFO] - Val - Loss: 0.2122, Acc: 0.7977, AUC: 0.9710
+[2025-08-07 17:56:12,698][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 17:56:12,873][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_011.pth
+[2025-08-07 17:56:12,873][src.training.callbacks][INFO] - Learning rate: 8.86e-05
+[2025-08-07 17:56:12,873][src.training.callbacks][INFO] - EarlyStopping: No improvement for 1 epochs
+[2025-08-07 17:56:12,873][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 17:56:12,873][src.training.trainer][INFO] - Epoch 12/50
+[2025-08-07 17:57:23,049][src.training.trainer][INFO] - Train - Loss: 0.1718, Acc: 0.8640, AUC: 0.9848
+[2025-08-07 17:57:23,049][src.training.trainer][INFO] - Val - Loss: 0.2122, Acc: 0.8323, AUC: 0.9751
+[2025-08-07 17:57:23,286][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 17:57:23,427][src.training.callbacks][INFO] - Saved best checkpoint to checkpoints/checkpoint_best.pth
+[2025-08-07 17:57:23,607][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_012.pth
+[2025-08-07 17:57:23,607][src.training.callbacks][INFO] - Learning rate: 8.66e-05
+[2025-08-07 17:57:23,607][src.training.callbacks][INFO] - EarlyStopping: New best score = 0.9751
+[2025-08-07 17:57:23,607][src.training.trainer][INFO] - New best validation AUC: 0.9751
+[2025-08-07 17:57:23,607][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 17:57:23,607][src.training.trainer][INFO] - Epoch 13/50
+[2025-08-07 17:58:34,457][src.training.trainer][INFO] - Train - Loss: 0.1650, Acc: 0.8701, AUC: 0.9854
+[2025-08-07 17:58:34,458][src.training.trainer][INFO] - Val - Loss: 0.2475, Acc: 0.7671, AUC: 0.9722
+[2025-08-07 17:58:34,619][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 17:58:34,796][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_013.pth
+[2025-08-07 17:58:34,796][src.training.callbacks][INFO] - Learning rate: 8.44e-05
+[2025-08-07 17:58:34,796][src.training.callbacks][INFO] - EarlyStopping: No improvement for 1 epochs
+[2025-08-07 17:58:34,796][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 17:58:34,796][src.training.trainer][INFO] - Epoch 14/50
+[2025-08-07 17:59:48,091][src.training.trainer][INFO] - Train - Loss: 0.1537, Acc: 0.8759, AUC: 0.9867
+[2025-08-07 17:59:48,091][src.training.trainer][INFO] - Val - Loss: 0.2019, Acc: 0.8377, AUC: 0.9713
+[2025-08-07 17:59:48,254][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 17:59:48,440][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_014.pth
+[2025-08-07 17:59:48,440][src.training.callbacks][INFO] - Learning rate: 8.21e-05
+[2025-08-07 17:59:48,440][src.training.callbacks][INFO] - EarlyStopping: No improvement for 2 epochs
+[2025-08-07 17:59:48,440][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 17:59:48,440][src.training.trainer][INFO] - Epoch 15/50
+[2025-08-07 18:01:04,704][src.training.trainer][INFO] - Train - Loss: 0.1443, Acc: 0.8851, AUC: 0.9878
+[2025-08-07 18:01:04,705][src.training.trainer][INFO] - Val - Loss: 0.1880, Acc: 0.8490, AUC: 0.9735
+[2025-08-07 18:01:04,882][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 18:01:05,069][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_015.pth
+[2025-08-07 18:01:05,069][src.training.callbacks][INFO] - Learning rate: 7.96e-05
+[2025-08-07 18:01:05,069][src.training.callbacks][INFO] - EarlyStopping: No improvement for 3 epochs
+[2025-08-07 18:01:05,069][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 18:01:05,069][src.training.trainer][INFO] - Epoch 16/50
+[2025-08-07 18:02:20,685][src.training.trainer][INFO] - Train - Loss: 0.1484, Acc: 0.8787, AUC: 0.9881
+[2025-08-07 18:02:20,686][src.training.trainer][INFO] - Val - Loss: 0.2103, Acc: 0.8137, AUC: 0.9715
+[2025-08-07 18:02:20,854][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 18:02:21,039][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_016.pth
+[2025-08-07 18:02:21,040][src.training.callbacks][INFO] - Learning rate: 7.70e-05
+[2025-08-07 18:02:21,040][src.training.callbacks][INFO] - EarlyStopping: No improvement for 4 epochs
+[2025-08-07 18:02:21,040][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 18:02:21,040][src.training.trainer][INFO] - Epoch 17/50
+[2025-08-07 18:03:35,365][src.training.trainer][INFO] - Train - Loss: 0.1460, Acc: 0.8817, AUC: 0.9887
+[2025-08-07 18:03:35,365][src.training.trainer][INFO] - Val - Loss: 0.1846, Acc: 0.8669, AUC: 0.9741
+[2025-08-07 18:03:35,518][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 18:03:35,698][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_017.pth
+[2025-08-07 18:03:35,698][src.training.callbacks][INFO] - Learning rate: 7.43e-05
+[2025-08-07 18:03:35,698][src.training.callbacks][INFO] - EarlyStopping: No improvement for 5 epochs
+[2025-08-07 18:03:35,698][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 18:03:35,698][src.training.trainer][INFO] - Epoch 18/50
+[2025-08-07 18:04:49,796][src.training.trainer][INFO] - Train - Loss: 0.1404, Acc: 0.8906, AUC: 0.9897
+[2025-08-07 18:04:49,796][src.training.trainer][INFO] - Val - Loss: 0.2063, Acc: 0.8436, AUC: 0.9699
+[2025-08-07 18:04:49,955][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 18:04:50,134][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_018.pth
+[2025-08-07 18:04:50,134][src.training.callbacks][INFO] - Learning rate: 7.16e-05
+[2025-08-07 18:04:50,134][src.training.callbacks][INFO] - EarlyStopping: No improvement for 6 epochs
+[2025-08-07 18:04:50,134][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 18:04:50,134][src.training.trainer][INFO] - Epoch 19/50
+[2025-08-07 18:06:07,361][src.training.trainer][INFO] - Train - Loss: 0.1219, Acc: 0.9014, AUC: 0.9915
+[2025-08-07 18:06:07,361][src.training.trainer][INFO] - Val - Loss: 0.2019, Acc: 0.8476, AUC: 0.9739
+[2025-08-07 18:06:07,529][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 18:06:07,723][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_019.pth
+[2025-08-07 18:06:07,723][src.training.callbacks][INFO] - Learning rate: 6.87e-05
+[2025-08-07 18:06:07,723][src.training.callbacks][INFO] - EarlyStopping: No improvement for 7 epochs
+[2025-08-07 18:06:07,723][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 18:06:07,723][src.training.trainer][INFO] - Epoch 20/50
+[2025-08-07 18:07:19,578][src.training.trainer][INFO] - Train - Loss: 0.1198, Acc: 0.9057, AUC: 0.9916
+[2025-08-07 18:07:19,578][src.training.trainer][INFO] - Val - Loss: 0.2259, Acc: 0.8051, AUC: 0.9726
+[2025-08-07 18:07:19,733][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 18:07:19,911][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_020.pth
+[2025-08-07 18:07:19,911][src.training.callbacks][INFO] - Learning rate: 6.58e-05
+[2025-08-07 18:07:19,911][src.training.callbacks][INFO] - EarlyStopping: No improvement for 8 epochs
+[2025-08-07 18:07:19,911][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 18:07:19,911][src.training.trainer][INFO] - Epoch 21/50
+[2025-08-07 18:08:30,585][src.training.trainer][INFO] - Train - Loss: 0.1243, Acc: 0.9050, AUC: 0.9911
+[2025-08-07 18:08:30,586][src.training.trainer][INFO] - Val - Loss: 0.2056, Acc: 0.8536, AUC: 0.9751
+[2025-08-07 18:08:30,744][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 18:08:30,886][src.training.callbacks][INFO] - Saved best checkpoint to checkpoints/checkpoint_best.pth
+[2025-08-07 18:08:31,061][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_021.pth
+[2025-08-07 18:08:31,061][src.training.callbacks][INFO] - Learning rate: 6.28e-05
+[2025-08-07 18:08:31,061][src.training.callbacks][INFO] - EarlyStopping: No improvement for 9 epochs
+[2025-08-07 18:08:31,061][src.training.trainer][INFO] - New best validation AUC: 0.9751
+[2025-08-07 18:08:31,061][src.training.trainer][INFO] - 
+==================================================
+[2025-08-07 18:08:31,061][src.training.trainer][INFO] - Epoch 22/50
+[2025-08-07 18:09:42,273][src.training.trainer][INFO] - Train - Loss: 0.1082, Acc: 0.9090, AUC: 0.9927
+[2025-08-07 18:09:42,273][src.training.trainer][INFO] - Val - Loss: 0.2177, Acc: 0.8430, AUC: 0.9737
+[2025-08-07 18:09:42,508][src.training.callbacks][INFO] - Saved last checkpoint to checkpoints/checkpoint_last.pth
+[2025-08-07 18:09:42,688][src.training.callbacks][INFO] - Saved checkpoint to checkpoints/checkpoint_epoch_022.pth
+[2025-08-07 18:09:42,689][src.training.callbacks][INFO] - Learning rate: 5.98e-05
+[2025-08-07 18:09:42,689][src.training.callbacks][INFO] - EarlyStopping: No improvement for 10 epochs
+[2025-08-07 18:09:42,689][src.training.callbacks][INFO] - EarlyStopping: Stopping training after 10 epochs without improvement
+[2025-08-07 18:09:42,689][src.training.trainer][INFO] - Early stopping triggered!
+[2025-08-07 18:09:42,693][src.training.callbacks][INFO] - Saved metrics to checkpoints/training_metrics.json
+[2025-08-07 18:09:42,693][src.training.trainer][INFO] - Training completed! Best validation AUC: 0.9751
+[2025-08-07 18:09:42,693][training][INFO] - Running test evaluation...
+[2025-08-07 18:09:42,694][src.training.trainer][INFO] - Running test evaluation...
+[2025-08-07 18:09:49,147][src.training.trainer][INFO] - 
+Test Classification Report:
+[2025-08-07 18:09:49,149][src.training.trainer][INFO] -               precision    recall  f1-score   support
+
+       akiec     0.7826    0.7347    0.7579        49
+         bcc     0.8026    0.7922    0.7974        77
+         bkl     0.7005    0.7939    0.7443       165
+          df     1.0000    0.8235    0.9032        17
+         mel     0.5000    0.8263    0.6230       167
+          nv     0.9637    0.8449    0.9004      1006
+        vasc     0.9091    0.9091    0.9091        22
+
+    accuracy                         0.8317      1503
+   macro avg     0.8084    0.8178    0.8051      1503
+weighted avg     0.8688    0.8317    0.8427      1503
+
+[2025-08-07 18:09:49,149][src.training.trainer][INFO] - 
+Test Metrics:
+[2025-08-07 18:09:49,149][src.training.trainer][INFO] -   Accuracy: 0.8317
+[2025-08-07 18:09:49,149][src.training.trainer][INFO] -   Balanced Accuracy: 0.8178
+[2025-08-07 18:09:49,149][src.training.trainer][INFO] -   AUC-ROC: 0.9772
+[2025-08-07 18:09:49,149][src.training.trainer][INFO] -   Sensitivity: 0.8178
+[2025-08-07 18:09:49,149][src.training.trainer][INFO] -   Specificity: 0.9674
+[2025-08-07 18:09:49,149][training][INFO] - ==================================================
+[2025-08-07 18:09:49,149][training][INFO] - Training completed!
+[2025-08-07 18:09:49,149][training][INFO] - Best validation AUC: 0.9751
+[2025-08-07 18:09:49,149][training][INFO] - Test AUC: 0.9772
+[2025-08-07 18:09:49,150][training][INFO] - Test Accuracy: 0.8317
+[2025-08-07 18:09:49,150][training][INFO] - Test Balanced Accuracy: 0.8178
+[2025-08-07 18:09:49,150][training][INFO] - ✓ AUC target met: 0.9772 >= 0.9
+[2025-08-07 18:09:49,150][training][WARNING] - ✗ Accuracy target not met: 0.8317 < 0.85

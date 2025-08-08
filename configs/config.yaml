@@ -1,0 +1,65 @@
+# Configuration for Skin Lesion Classification
+
+# Data configuration
+data:
+  data_dir: "HAM10000"
+  metadata_path: "HAM10000/HAM10000_metadata.csv"
+  image_size: 224
+  batch_size: 32
+  num_workers: 0  # Set to 0 on macOS to avoid "too many open files" error
+  val_split: 0.15
+  test_split: 0.15
+  use_metadata: false  # Whether to use patient metadata
+  use_weighted_sampling: true  # Handle class imbalance
+  seed: 42  # Add seed here for data splits
+
+# Model configuration
+model:
+  architecture: "efficientnet_b0"  # Options: efficientnet_b0/b1/b2, resnet50/101, vit_small/base, swin_tiny/small
+  pretrained: true
+  num_classes: 7
+  dropout: 0.3
+  use_metadata: false
+
+# Training configuration
+training:
+  epochs: 50
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  optimizer: "adamw"  # Options: adam, adamw, sgd
+  scheduler: "cosine"  # Options: cosine, reduce_on_plateau, step
+  early_stopping_patience: 10
+  gradient_clip_val: 1.0
+  loss: "focal"  # Options: focal, label_smoothing, ce
+
+# Experiment configuration
+experiment:
+  name: "baseline_efficientnet_b0"
+  project_name: "skin-lesion-classification"
+  seed: 42
+  device: "mps"  # Use 'mps' for Mac M1/M2, 'cuda' for NVIDIA GPU, 'cpu' for CPU
+  use_wandb: false  # Set to false by default to avoid login issues
+  checkpoint_dir: "checkpoints"
+
+# Inference configuration
+inference:
+  tta_enabled: true  # Test-time augmentation
+  tta_transforms: 5  # Number of augmented versions
+  confidence_threshold: 0.7
+  batch_size: 32
+
+# Advanced features
+advanced:
+  use_ensemble: false
+  ensemble_models:
+    - "efficientnet_b0"
+    - "efficientnet_b1"
+    - "resnet50"
+  ensemble_weights: null  # Use equal weights if null
+
+# Performance targets
+targets:
+  min_val_auc: 0.90
+  min_val_accuracy: 0.85
+  max_inference_time_ms: 100
+  max_model_size_mb: 50

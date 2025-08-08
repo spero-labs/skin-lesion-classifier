@@ -11,7 +11,7 @@ class AugmentationFactory:
         return A.Compose(
             [
                 A.RandomResizedCrop(
-                    height=image_size, width=image_size, scale=(0.8, 1.0)
+                    size=(image_size, image_size), scale=(0.8, 1.0)
                 ),
                 A.Rotate(limit=30, p=0.5),
                 A.HorizontalFlip(p=0.5),
@@ -32,16 +32,24 @@ class AugmentationFactory:
                 ),
                 A.OneOf(
                     [
-                        A.GaussNoise(var_limit=(10.0, 50.0)),
-                        A.GaussianBlur(blur_limit=(3, 7)),
-                        A.MedianBlur(blur_limit=(3, 7)),
+                        A.GaussNoise(p=1.0),
+                        A.GaussianBlur(blur_limit=(3, 7), p=1.0),
+                        A.MedianBlur(blur_limit=(3, 7), p=1.0),
                     ],
                     p=0.3,
                 ),
-                A.ShiftScaleRotate(
-                    shift_limit=0.1, scale_limit=0.1, rotate_limit=15, p=0.5
+                A.Affine(
+                    translate_percent={"x": 0.1, "y": 0.1},
+                    scale=(0.9, 1.1),
+                    rotate=15,
+                    p=0.5
                 ),
-                A.CoarseDropout(max_holes=8, max_height=32, max_width=32, p=0.3),
+                A.CoarseDropout(
+                    num_holes_range=(1, 8),
+                    hole_height_range=(8, 32),
+                    hole_width_range=(8, 32),
+                    p=0.3
+                ),
                 A.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
                 ToTensorV2(),
             ]
